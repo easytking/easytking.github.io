@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    
+    <script type="application/ld+json">
+
+{  
+  "@context":"http://schema.org",
+  "@type":"Website",
+  "@id":"https:\/\/luckytking.github.io\/",
+  "author": {
+    "@type": "Person",
+    "name": "jefffff",
+    
+    "image": "https://luckytking.github.io/images/tk.jpg"
+    
+  },
+  "name":"jefffff\u0027s Blog",
+  "description":"",
+  "url":"https:\/\/luckytking.github.io\/tags\/go-redis\/",
+  "keywords":"[]"
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.89.2 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="jefffff">
+<meta name="keywords" content="">
+<meta name="description" content="">
+
+
+<meta property="og:description" content="">
+<meta property="og:type" content="website">
+<meta property="og:title" content="go-redis">
+<meta name="twitter:title" content="go-redis">
+<meta property="og:url" content="https://luckytking.github.io/tags/go-redis/">
+<meta property="twitter:url" content="https://luckytking.github.io/tags/go-redis/">
+<meta property="og:site_name" content="jefffff&#39;s Blog">
+<meta property="og:description" content="">
+<meta name="twitter:description" content="">
+<meta property="og:locale" content="en">
+
+
+<meta name="twitter:card" content="summary">
+
+  <meta name="twitter:site" content="@none">
+
+
+  <meta name="twitter:creator" content="@none">
+
+
+
+
+
+
+  <meta property="og:image" content="https://luckytking.github.io/images/tk.jpg">
+  <meta property="twitter:image" content="https://luckytking.github.io/images/tk.jpg">
+
+
+
+
+
+
+    <title>go-redis</title>
+
+    <link rel="icon" href="https://luckytking.github.io/favicon.jpg">
+    
+      <link rel="alternate" type="application/rss+xml" title="RSS" href="https://luckytking.github.io/tags/go-redis/index.xml">
+    
+
+    
+      <link rel="publisher" href="https://plus.google.com/&#43;thibaudlepretre">
+    
+
+    <link rel="canonical" href="https://luckytking.github.io/tags/go-redis/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://luckytking.github.io/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="2">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://luckytking.github.io/" aria-label="">jefffff&#39;s Blog</a>
+  </div>
+  
+    
+      <a class="header-right-icon open-algolia-search"
+         href="https://luckytking.github.io/#search" aria-label="">
+    
+    
+      <i class="fa fa-lg fa-search"></i>
+    
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="2">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://luckytking.github.io/#about" aria-label="">
+          <img class="sidebar-profile-picture" src="https://luckytking.github.io/images/tk.jpg" alt="" />
+        </a>
+        <h4 class="sidebar-profile-name">jefffff</h4>
+        
+          <h5 class="sidebar-profile-bio">Stay hungry. Stay Foolish  <strong>COOL</strong></h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://luckytking.github.io/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://luckytking.github.io/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://luckytking.github.io/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://luckytking.github.io/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://luckytking.github.io/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/luckytking" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://luckytking.github.io/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+        
+
+      
+      <div id="main" data-behavior="2"
+        class="
+               hasCoverMetaIn
+               ">
+        
+          <section class="postShorten-group main-content-wrap">
+            
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-right">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title">
+      
+        <a class="link-unstyled" href="https://luckytking.github.io/2023/04/go%E4%BD%BF%E7%94%A8redisstream%E5%AE%9E%E7%8E%B0%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" aria-label="">
+      
+          Go使用RedisStream实现消息队列
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="2023-04-08T22:33:14&#43;08:00">
+        
+   8, 2023
+
+      </time>
+    
+    
+  
+  
+    <span></span>
+    
+      <a class="category-link" href="https://luckytking.github.io/categories/go">go</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt">
+      
+        <p>上篇我们介绍了RedisStream实现消息队列和发布订阅模式 ，今天我们将介绍Go语言的实现方法。</p>
+<h3 id="消息队列">消息队列</h3>
+<p>接上篇的例子，我们通过go-redis库的接口XAdd、XReadGroup、XGroupCreateMkStream来实现，详细如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+
+<span style="color:#f92672">import</span> (
+	<span style="color:#e6db74">&#34;context&#34;</span>
+	<span style="color:#e6db74">&#34;fmt&#34;</span>
+	<span style="color:#e6db74">&#34;github.com/go-redis/redis/v8&#34;</span>
+)
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+	<span style="color:#66d9ef">var</span> (
+		<span style="color:#a6e22e">ctx</span>      = <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Background</span>()
+		<span style="color:#a6e22e">consumer</span> = <span style="color:#e6db74">&#34;consumer1&#34;</span>
+		<span style="color:#a6e22e">stream</span>   = <span style="color:#e6db74">&#34;mystream&#34;</span>
+		<span style="color:#a6e22e">group</span>    = <span style="color:#e6db74">&#34;group1&#34;</span>
+		<span style="color:#a6e22e">start</span>    = <span style="color:#e6db74">&#34;&gt;&#34;</span>
+		<span style="color:#a6e22e">count</span>    = <span style="color:#ae81ff">10</span>
+	)
+
+	<span style="color:#75715e">// 创建Redis客户端
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">client</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">redis</span>.<span style="color:#a6e22e">NewClient</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">redis</span>.<span style="color:#a6e22e">Options</span>{
+		<span style="color:#a6e22e">Addr</span>:     <span style="color:#e6db74">&#34;localhost:6379&#34;</span>,
+		<span style="color:#a6e22e">Password</span>: <span style="color:#e6db74">&#34;&#34;</span>,
+		<span style="color:#a6e22e">DB</span>:       <span style="color:#ae81ff">0</span>,
+	})
+	<span style="color:#75715e">// 创建消费者组
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">client</span>.<span style="color:#a6e22e">XGroupCreateMkStream</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#a6e22e">stream</span>, <span style="color:#a6e22e">group</span>, <span style="color:#e6db74">&#34;0-0&#34;</span>).<span style="color:#a6e22e">Err</span>()
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		panic(<span style="color:#a6e22e">err</span>)
+	}
+	<span style="color:#75715e">//添加消息
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">client</span>.<span style="color:#a6e22e">XAdd</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">redis</span>.<span style="color:#a6e22e">XAddArgs</span>{
+		<span style="color:#a6e22e">Stream</span>: <span style="color:#a6e22e">stream</span>,
+		<span style="color:#a6e22e">ID</span>:     <span style="color:#e6db74">&#34;*&#34;</span>,
+		<span style="color:#a6e22e">Values</span>: <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{}{
+			<span style="color:#e6db74">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;foo&#34;</span>,
+		},
+	}).<span style="color:#a6e22e">Result</span>()
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		panic(<span style="color:#a6e22e">err</span>)
+	}
+	<span style="color:#75715e">//读取消息
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">messages</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">client</span>.<span style="color:#a6e22e">XReadGroup</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">redis</span>.<span style="color:#a6e22e">XReadGroupArgs</span>{
+		<span style="color:#a6e22e">Group</span>:    <span style="color:#a6e22e">group</span>,
+		<span style="color:#a6e22e">Consumer</span>: <span style="color:#a6e22e">consumer</span>,
+		<span style="color:#a6e22e">Streams</span>:  []<span style="color:#66d9ef">string</span>{<span style="color:#a6e22e">stream</span>, <span style="color:#a6e22e">start</span>},
+		<span style="color:#a6e22e">Count</span>:    int64(<span style="color:#a6e22e">count</span>),
+		<span style="color:#a6e22e">Block</span>:    <span style="color:#ae81ff">0</span>,
+		<span style="color:#a6e22e">NoAck</span>:    <span style="color:#66d9ef">false</span>,
+	}).<span style="color:#a6e22e">Result</span>()
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		panic(<span style="color:#a6e22e">err</span>)
+	} 
+	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">message</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">messages</span>[<span style="color:#ae81ff">0</span>].<span style="color:#a6e22e">Messages</span> {
+		<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;Received message: %v\n&#34;</span>, <span style="color:#a6e22e">message</span>.<span style="color:#a6e22e">Values</span>)
+	}
+}
+
+</code></pre></div><p>上例实现了一个简单的消息队列，可以实现消息的发送和接收，并保证每条消息只被处理一次 。</p>
+<h3 id="阻塞超时">阻塞超时</h3>
+<p>通过修改Block（单位为ms）参数来实现阻塞，详细修改如下</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">for</span> {
+		<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;Start Receiving&#34;</span>, <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Now</span>().<span style="color:#a6e22e">String</span>())
+		<span style="color:#75715e">//读取消息
+</span><span style="color:#75715e"></span>		<span style="color:#a6e22e">messages</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">client</span>.<span style="color:#a6e22e">XReadGroup</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">redis</span>.<span style="color:#a6e22e">XReadGroupArgs</span>{
+			<span style="color:#a6e22e">Group</span>:    <span style="color:#a6e22e">group</span>,
+			<span style="color:#a6e22e">Consumer</span>: <span style="color:#a6e22e">consumer</span>,
+			<span style="color:#a6e22e">Streams</span>:  []<span style="color:#66d9ef">string</span>{<span style="color:#a6e22e">stream</span>, <span style="color:#a6e22e">start</span>},
+			<span style="color:#a6e22e">Count</span>:    int64(<span style="color:#a6e22e">count</span>),
+			<span style="color:#a6e22e">Block</span>:    <span style="color:#ae81ff">2000</span>,
+			<span style="color:#a6e22e">NoAck</span>:    <span style="color:#66d9ef">false</span>,
+		}).<span style="color:#a6e22e">Result</span>()
+		<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+			panic(<span style="color:#a6e22e">err</span>)
+		}
+		<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;Received Length=&#34;</span>, len(<span style="color:#a6e22e">messages</span>), <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Now</span>().<span style="color:#a6e22e">String</span>()) 
+    <span style="color:#f92672">...</span>
+	}
+</code></pre></div><p>输出如下:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-css" data-lang="css"><span style="color:#f92672">Start</span> <span style="color:#f92672">Receiving</span> <span style="color:#f92672">2023-04-08</span> <span style="color:#f92672">21</span>:<span style="color:#a6e22e">39</span>:<span style="color:#a6e22e">23</span>.<span style="color:#a6e22e">9669498</span> <span style="color:#f92672">+</span><span style="color:#f92672">0800</span> <span style="color:#f92672">CST</span> <span style="color:#f92672">m</span><span style="color:#f92672">=+</span><span style="color:#f92672">0</span>.<span style="color:#a6e22e">529310801</span>
+<span style="color:#f92672">Received</span> <span style="color:#f92672">Length</span><span style="color:#f92672">=</span> <span style="color:#f92672">1</span> <span style="color:#f92672">2023-04-08</span> <span style="color:#f92672">21</span>:<span style="color:#a6e22e">39</span>:<span style="color:#a6e22e">24</span>.<span style="color:#a6e22e">0419963</span> <span style="color:#f92672">+</span><span style="color:#f92672">0800</span> <span style="color:#f92672">CST</span> <span style="color:#f92672">m</span><span style="color:#f92672">=+</span><span style="color:#f92672">0</span>.<span style="color:#a6e22e">604357301</span>
+<span style="color:#f92672">Received</span> <span style="color:#f92672">message</span><span style="color:#f92672">:</span> <span style="color:#f92672">map</span><span style="color:#f92672">[</span><span style="color:#f92672">name</span>:<span style="color:#a6e22e">foo</span><span style="color:#f92672">]</span>
+<span style="color:#f92672">Start</span> <span style="color:#f92672">Receiving</span> <span style="color:#f92672">2023-04-08</span> <span style="color:#f92672">21</span>:<span style="color:#a6e22e">39</span>:<span style="color:#a6e22e">24</span>.<span style="color:#a6e22e">0419963</span> <span style="color:#f92672">+</span><span style="color:#f92672">0800</span> <span style="color:#f92672">CST</span> <span style="color:#f92672">m</span><span style="color:#f92672">=+</span><span style="color:#f92672">0</span>.<span style="color:#a6e22e">604357301</span>
+<span style="color:#f92672">panic</span><span style="color:#f92672">:</span> <span style="color:#f92672">read</span> <span style="color:#f92672">tcp</span> <span style="color:#f92672">127</span>.<span style="color:#a6e22e">0</span>.<span style="color:#a6e22e">0</span>.<span style="color:#a6e22e">1</span>:<span style="color:#a6e22e">63777-</span><span style="color:#f92672">&gt;</span><span style="color:#f92672">127</span>.<span style="color:#a6e22e">0</span>.<span style="color:#a6e22e">0</span>.<span style="color:#a6e22e">1</span>:<span style="color:#a6e22e">6379</span><span style="color:#f92672">:</span> <span style="color:#f92672">i</span><span style="color:#f92672">/</span><span style="color:#f92672">o</span> <span style="color:#f92672">timeout</span>
+</code></pre></div><p>可见,XReadGroup一直阻塞等待新的消息，直到 Redis 连接超时或者命令被中断。
+ps: 如若不需要阻塞等待可修改Block为&lt;0 的值实现。</p>
+<h3 id="发布订阅模式">发布订阅模式</h3>
+<p>接着，我们实现上篇提到的发布订阅模式，XGroupCreateMkStream创建另外一个订阅组group2，两个协程XReadGroup接收消息，往stream中XAdd消息，两个订阅者将都收到消息，详细如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+
+<span style="color:#f92672">import</span> (
+	<span style="color:#e6db74">&#34;context&#34;</span>
+	<span style="color:#e6db74">&#34;fmt&#34;</span>
+	<span style="color:#e6db74">&#34;github.com/go-redis/redis/v8&#34;</span>
+	<span style="color:#e6db74">&#34;time&#34;</span>
+)
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+	<span style="color:#66d9ef">var</span> (
+		<span style="color:#a6e22e">ctx</span>       = <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Background</span>()
+		<span style="color:#a6e22e">consumer</span>  = <span style="color:#e6db74">&#34;consumer1&#34;</span>
+		<span style="color:#a6e22e">consumer2</span> = <span style="color:#e6db74">&#34;consumer2&#34;</span>
+		<span style="color:#a6e22e">stream</span>    = <span style="color:#e6db74">&#34;mystream&#34;</span>
+		<span style="color:#a6e22e">group</span>     = <span style="color:#e6db74">&#34;group1&#34;</span>
+		<span style="color:#a6e22e">group2</span>    = <span style="color:#e6db74">&#34;group2&#34;</span>
+		<span style="color:#a6e22e">start</span>     = <span style="color:#e6db74">&#34;&gt;&#34;</span>
+		<span style="color:#a6e22e">count</span>     = <span style="color:#ae81ff">10</span>
+	)
+	<span style="color:#75715e">// 创建Redis客户端
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">client</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">redis</span>.<span style="color:#a6e22e">NewClient</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">redis</span>.<span style="color:#a6e22e">Options</span>{
+		<span style="color:#a6e22e">Addr</span>:        <span style="color:#e6db74">&#34;localhost:6379&#34;</span>,
+		<span style="color:#a6e22e">Password</span>:    <span style="color:#e6db74">&#34;&#34;</span>,
+		<span style="color:#a6e22e">DB</span>:          <span style="color:#ae81ff">0</span>,
+		<span style="color:#a6e22e">ReadTimeout</span>: <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Second</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">10</span>,
+	})
+	<span style="color:#75715e">// 创建消费者组
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">client</span>.<span style="color:#a6e22e">XGroupCreateMkStream</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#a6e22e">stream</span>, <span style="color:#a6e22e">group</span>, <span style="color:#e6db74">&#34;0-0&#34;</span>).<span style="color:#a6e22e">Err</span>()
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#75715e">//panic(err)
+</span><span style="color:#75715e"></span>	}
+	<span style="color:#75715e">// 创建消费者组2
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">client</span>.<span style="color:#a6e22e">XGroupCreateMkStream</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#a6e22e">stream</span>, <span style="color:#a6e22e">group2</span>, <span style="color:#e6db74">&#34;0-0&#34;</span>).<span style="color:#a6e22e">Err</span>()
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#75715e">//panic(err)
+</span><span style="color:#75715e"></span>	}
+	<span style="color:#75715e">//添加消息
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">client</span>.<span style="color:#a6e22e">XAdd</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">redis</span>.<span style="color:#a6e22e">XAddArgs</span>{
+		<span style="color:#a6e22e">Stream</span>: <span style="color:#a6e22e">stream</span>,
+		<span style="color:#a6e22e">ID</span>:     <span style="color:#e6db74">&#34;*&#34;</span>,
+		<span style="color:#a6e22e">Values</span>: <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{}{
+			<span style="color:#e6db74">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;foo&#34;</span>,
+		},
+	}).<span style="color:#a6e22e">Result</span>()
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		panic(<span style="color:#a6e22e">err</span>)
+	}
+	<span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span>() {
+		<span style="color:#66d9ef">for</span> {
+			<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;Start Receiving&#34;</span>, <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Now</span>().<span style="color:#a6e22e">String</span>())
+			<span style="color:#75715e">//读取消息
+</span><span style="color:#75715e"></span>			<span style="color:#a6e22e">messages</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">client</span>.<span style="color:#a6e22e">XReadGroup</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">redis</span>.<span style="color:#a6e22e">XReadGroupArgs</span>{
+				<span style="color:#a6e22e">Group</span>:    <span style="color:#a6e22e">group</span>,
+				<span style="color:#a6e22e">Consumer</span>: <span style="color:#a6e22e">consumer</span>,
+				<span style="color:#a6e22e">Streams</span>:  []<span style="color:#66d9ef">string</span>{<span style="color:#a6e22e">stream</span>, <span style="color:#a6e22e">start</span>},
+				<span style="color:#a6e22e">Count</span>:    int64(<span style="color:#a6e22e">count</span>),
+				<span style="color:#a6e22e">Block</span>:    <span style="color:#ae81ff">2000</span>,
+				<span style="color:#a6e22e">NoAck</span>:    <span style="color:#66d9ef">false</span>,
+			}).<span style="color:#a6e22e">Result</span>()
+			<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+				panic(<span style="color:#a6e22e">err</span>)
+			}
+			<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;Received Length=&#34;</span>, len(<span style="color:#a6e22e">messages</span>), <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Now</span>().<span style="color:#a6e22e">String</span>())
+			<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">message</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">messages</span>[<span style="color:#ae81ff">0</span>].<span style="color:#a6e22e">Messages</span> {
+				<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;Received message: %v\n&#34;</span>, <span style="color:#a6e22e">message</span>.<span style="color:#a6e22e">Values</span>)
+			}
+
+		}
+	}()
+	<span style="color:#75715e">//读取消息2
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span>() {
+		<span style="color:#66d9ef">for</span> {
+			<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;2 Start Receiving &#34;</span>, <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Now</span>().<span style="color:#a6e22e">String</span>())
+			<span style="color:#a6e22e">messages</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">client</span>.<span style="color:#a6e22e">XReadGroup</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">redis</span>.<span style="color:#a6e22e">XReadGroupArgs</span>{
+				<span style="color:#a6e22e">Group</span>:    <span style="color:#a6e22e">group2</span>,
+				<span style="color:#a6e22e">Consumer</span>: <span style="color:#a6e22e">consumer2</span>,
+				<span style="color:#a6e22e">Streams</span>:  []<span style="color:#66d9ef">string</span>{<span style="color:#a6e22e">stream</span>, <span style="color:#a6e22e">start</span>},
+				<span style="color:#a6e22e">Count</span>:    int64(<span style="color:#a6e22e">count</span>),
+				<span style="color:#a6e22e">Block</span>:    <span style="color:#ae81ff">2000</span>,
+				<span style="color:#a6e22e">NoAck</span>:    <span style="color:#66d9ef">false</span>,
+			}).<span style="color:#a6e22e">Result</span>()
+			<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+				panic(<span style="color:#a6e22e">err</span>)
+			}
+			<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;2 Received Length=&#34;</span>, len(<span style="color:#a6e22e">messages</span>), <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Now</span>().<span style="color:#a6e22e">String</span>())
+			<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">message</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">messages</span>[<span style="color:#ae81ff">0</span>].<span style="color:#a6e22e">Messages</span> {
+				<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;2Received message: %v\n&#34;</span>, <span style="color:#a6e22e">message</span>.<span style="color:#a6e22e">Values</span>)
+			}
+		}
+	}()
+	<span style="color:#66d9ef">for</span> {
+	}
+}
+</code></pre></div><p>输出如下：</p>
+<pre tabindex="0"><code>Start Receiving 2023-04-08 22:19:41.9981051 +0800 CST m=+0.347161101
+2 Start Receiving  2023-04-08 22:19:41.9981051 +0800 CST m=+0.347161101
+Received Length= 1 2023-04-08 22:19:42.0571709 +0800 CST m=+0.406226901
+Received message: map[name:foo]
+Start Receiving 2023-04-08 22:19:42.0571709 +0800 CST m=+0.406226901
+2 Received Length= 1 2023-04-08 22:19:42.3628412 +0800 CST m=+0.711897201
+2Received message: map[name:foo]
+</code></pre><h3 id="参考">参考</h3>
+<ul>
+<li><a href="https://redis.io/commands/xread">redis.io</a></li>
+<li><a href="https://redis.io/docs/data-types/streams-tutorial">redis.io streams-tutorial</a></li>
+<li><a href="https://mp.weixin.qq.com/s/RthQvzLHZRGNo-z6X_7jQQ">一篇List、PubSub、Stream实现消息队列的博客</a></li>
+<li><a href="https://overstarry.vip/posts/%E4%BD%BF%E7%94%A8redis%E5%AE%9E%E7%8E%B0%E9%98%9F%E5%88%97-/">golang适用用List、PubSub、Stream 实现消息队列</a></li>
+<li><a href="%E5%88%97/https://luckytking.github.io/2023/04/redisstream%E5%AE%9E%E7%8E%B0%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/">redisstream实现消息队</a></li>
+</ul>
+      
+      <p>
+        
+          <a href="https://luckytking.github.io/2023/04/go%E4%BD%BF%E7%94%A8redisstream%E5%AE%9E%E7%8E%B0%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" class="postShorten-excerpt_link link" aria-label=""></a>
+        
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-right">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title">
+      
+        <a class="link-unstyled" href="https://luckytking.github.io/2022/10/golang%E4%BD%BF%E7%94%A8redissortsets%E5%AE%9E%E7%8E%B0%E6%8E%92%E8%A1%8C%E6%A6%9C/" aria-label="">
+      
+          Golang使用RedisSortSets实现排行榜
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="2022-10-30T15:43:28&#43;08:00">
+        
+   30, 2022
+
+      </time>
+    
+    
+  
+  
+    <span></span>
+    
+      <a class="category-link" href="https://luckytking.github.io/categories/go">go</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt">
+      
+        <h3 id="前言">前言</h3>
+<p>游戏排行榜是一个常见需求，今天主要介绍go语言使用redis-sort-sets来实现排行榜常见功能。</p>
+<h3 id="redis-sort-sets">Redis Sort Sets</h3>
+<p>官方介绍：</p>
+<blockquote>
+<p>Redis排序集是按相关分数排序的惟一字符串(成员)的集合。当多个字符串具有相同的分数时，字符串将按字典顺序排列。排序集的一些用例包括:</p>
+<p>游戏排行榜。例如，您可以使用排序集轻松地维护大型在线游戏中最高分数的有序列表。
+速率限制器。特别是，您可以使用一个排序集来构建滑动窗口速率限制器，以防止过多的API请求。</p>
+</blockquote>
+<p>常用于排行榜的命令:</p>
+<ul>
+<li>ZRANGE 返回排序集的成员（升序）</li>
+<li>ZREVANGE 返回排序集的成员（降序序）</li>
+<li>ZADD 向排序集添加一个新成员和相关分数。如果成员已经存在，则更新评分。</li>
+<li>ZREM 删除排序集一个成员</li>
+<li>ZRANK 返回提供的成员的排名(升序)</li>
+<li>ZREVRANK 返回提供的成员的排名(降序)</li>
+</ul>
+<h3 id="go-redis">Go Redis</h3>
+<p>Go Redis为各种风格的Redis提供Go客户端，基础的使用例子如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+
+<span style="color:#f92672">import</span> (
+	<span style="color:#e6db74">&#34;context&#34;</span>
+	<span style="color:#e6db74">&#34;fmt&#34;</span>
+	<span style="color:#e6db74">&#34;github.com/go-redis/redis/v9&#34;</span>
+)
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+	<span style="color:#a6e22e">ctx</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Background</span>()
+	<span style="color:#a6e22e">rdb</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">redis</span>.<span style="color:#a6e22e">NewClient</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">redis</span>.<span style="color:#a6e22e">Options</span>{
+		<span style="color:#a6e22e">Addr</span>:     <span style="color:#e6db74">&#34;localhost:6379&#34;</span>, <span style="color:#75715e">// use default Addr
+</span><span style="color:#75715e"></span>		<span style="color:#a6e22e">Password</span>: <span style="color:#e6db74">&#34;&#34;</span>,               <span style="color:#75715e">// no password set
+</span><span style="color:#75715e"></span>		<span style="color:#a6e22e">DB</span>:       <span style="color:#ae81ff">0</span>,                <span style="color:#75715e">// use default DB
+</span><span style="color:#75715e"></span>	})
+	<span style="color:#a6e22e">pong</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">rdb</span>.<span style="color:#a6e22e">Ping</span>(<span style="color:#a6e22e">ctx</span>).<span style="color:#a6e22e">Result</span>()
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">err</span>)
+		<span style="color:#66d9ef">return</span>
+	}
+	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">pong</span>, <span style="color:#a6e22e">err</span>)
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">err</span>)
+		<span style="color:#66d9ef">return</span>
+	}
+    <span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">rdb</span>.<span style="color:#a6e22e">Close</span>()
+}
+</code></pre></div><h3 id="examples">Examples</h3>
+<p>这里我们用go-redis实现排行榜常见的功能，包括:</p>
+<ul>
+<li>获取排行榜成员和分数 （升序、降序）</li>
+<li>加入排行榜成员</li>
+<li>删除排行榜成员</li>
+<li>更新排行榜成员分数</li>
+<li>获取排行榜成员分数</li>
+<li>获取排行榜名次成员</li>
+<li>清空排行榜</li>
+</ul>
+<p>完整代码如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+
+<span style="color:#f92672">import</span> (
+	<span style="color:#e6db74">&#34;context&#34;</span>
+	<span style="color:#e6db74">&#34;fmt&#34;</span>
+	<span style="color:#e6db74">&#34;github.com/go-redis/redis/v9&#34;</span>
+	<span style="color:#e6db74">&#34;math/rand&#34;</span>
+	<span style="color:#e6db74">&#34;strconv&#34;</span>
+)
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+	<span style="color:#a6e22e">ctx</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Background</span>()
+	<span style="color:#a6e22e">rdb</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">redis</span>.<span style="color:#a6e22e">NewClient</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">redis</span>.<span style="color:#a6e22e">Options</span>{
+		<span style="color:#a6e22e">Addr</span>:     <span style="color:#e6db74">&#34;localhost:6379&#34;</span>, <span style="color:#75715e">// use default Addr
+</span><span style="color:#75715e"></span>		<span style="color:#a6e22e">Password</span>: <span style="color:#e6db74">&#34;&#34;</span>,               <span style="color:#75715e">// no password set
+</span><span style="color:#75715e"></span>		<span style="color:#a6e22e">DB</span>:       <span style="color:#ae81ff">0</span>,                <span style="color:#75715e">// use default DB
+</span><span style="color:#75715e"></span>	}) 
+	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">err</span> <span style="color:#66d9ef">error</span>
+	<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">rdb</span>.<span style="color:#a6e22e">Close</span>()
+	<span style="color:#75715e">//增加玩家分数的变化
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">1</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">5</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+		<span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">rdb</span>.<span style="color:#a6e22e">ZAdd</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#e6db74">&#34;leaderboard&#34;</span>, <span style="color:#a6e22e">redis</span>.<span style="color:#a6e22e">Z</span>{
+			<span style="color:#a6e22e">Score</span>:  float64(<span style="color:#a6e22e">rand</span>.<span style="color:#a6e22e">Intn</span>(<span style="color:#ae81ff">100</span>)),
+			<span style="color:#a6e22e">Member</span>: <span style="color:#e6db74">&#34;user:&#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">strconv</span>.<span style="color:#a6e22e">Itoa</span>(<span style="color:#a6e22e">i</span>),
+		}).<span style="color:#a6e22e">Err</span>()
+		<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+			<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">err</span>)
+			<span style="color:#66d9ef">return</span>
+		}
+	}
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">err</span>)
+		<span style="color:#66d9ef">return</span>
+	}
+	<span style="color:#75715e">//查询排行榜成员-升序
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">members</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">rdb</span>.<span style="color:#a6e22e">ZRange</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#e6db74">&#34;leaderboard&#34;</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">5</span>).<span style="color:#a6e22e">Result</span>()
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">err</span>)
+		<span style="color:#66d9ef">return</span>
+	}
+	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;查询排行榜成员-升序&#34;</span>, <span style="color:#a6e22e">members</span>)
+	<span style="color:#75715e">//查询排行榜成员和分数-升序
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">membersWithScore</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">rdb</span>.<span style="color:#a6e22e">ZRevRangeWithScores</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#e6db74">&#34;leaderboard&#34;</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">5</span>).<span style="color:#a6e22e">Result</span>()
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">err</span>)
+		<span style="color:#66d9ef">return</span>
+	}
+	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;查询排行榜成员和分数-升序&#34;</span>, <span style="color:#a6e22e">membersWithScore</span>)
+
+	<span style="color:#75715e">//查询排行榜成员-降序
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">membersRev</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">rdb</span>.<span style="color:#a6e22e">ZRevRange</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#e6db74">&#34;leaderboard&#34;</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">5</span>).<span style="color:#a6e22e">Result</span>()
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">err</span>)
+		<span style="color:#66d9ef">return</span>
+	}
+	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;查询排行榜成员-降序&#34;</span>, <span style="color:#a6e22e">membersRev</span>)
+	<span style="color:#75715e">//查询排行榜成员和分数-升序
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">membersRevWithScore</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">rdb</span>.<span style="color:#a6e22e">ZRangeWithScores</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#e6db74">&#34;leaderboard&#34;</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">5</span>).<span style="color:#a6e22e">Result</span>()
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">err</span>)
+		<span style="color:#66d9ef">return</span>
+	}
+	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;查询排行榜成员和分数-升序&#34;</span>, <span style="color:#a6e22e">membersRevWithScore</span>)
+
+	<span style="color:#75715e">//获取某玩家的分数
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">user2Score</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">rdb</span>.<span style="color:#a6e22e">ZScore</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#e6db74">&#34;leaderboard&#34;</span>, <span style="color:#e6db74">&#34;user:2&#34;</span>).<span style="color:#a6e22e">Result</span>()
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">err</span>)
+		<span style="color:#66d9ef">return</span>
+	}
+	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;获取某玩家 user:2 的分数&#34;</span>, <span style="color:#a6e22e">user2Score</span>)
+	<span style="color:#75715e">//更新某玩家的分数
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">rdb</span>.<span style="color:#a6e22e">ZAdd</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#e6db74">&#34;leaderboard&#34;</span>, <span style="color:#a6e22e">redis</span>.<span style="color:#a6e22e">Z</span>{
+		<span style="color:#a6e22e">Score</span>:  <span style="color:#a6e22e">user2Score</span>,
+		<span style="color:#a6e22e">Member</span>: <span style="color:#e6db74">&#34;user:1&#34;</span>,
+	}).<span style="color:#a6e22e">Err</span>()
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">err</span>)
+		<span style="color:#66d9ef">return</span>
+	}
+	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;更新某玩家 user:1 的分数&#34;</span>, <span style="color:#a6e22e">user2Score</span>)
+	<span style="color:#75715e">//查询排行榜成员和分数-升序
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">membersRevWithScore</span>, <span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">rdb</span>.<span style="color:#a6e22e">ZRangeWithScores</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#e6db74">&#34;leaderboard&#34;</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">5</span>).<span style="color:#a6e22e">Result</span>()
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">err</span>)
+		<span style="color:#66d9ef">return</span>
+	}
+	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;查询排行榜变化后的排行榜成员和分数-升序&#34;</span>, <span style="color:#a6e22e">membersRevWithScore</span>)
+
+	<span style="color:#75715e">//查询排行榜某玩家的分数-升序
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">memberRank</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">rdb</span>.<span style="color:#a6e22e">ZRank</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#e6db74">&#34;leaderboard&#34;</span>, <span style="color:#e6db74">&#34;user:2&#34;</span>).<span style="color:#a6e22e">Result</span>()
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">err</span>)
+		<span style="color:#66d9ef">return</span>
+	}
+	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;查询排行榜某玩家  user:2 的排名&#34;</span>, <span style="color:#a6e22e">memberRank</span>)
+
+	<span style="color:#75715e">//查询排行榜某玩家的分数-降序
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">memberRevRank</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">rdb</span>.<span style="color:#a6e22e">ZRevRank</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#e6db74">&#34;leaderboard&#34;</span>, <span style="color:#e6db74">&#34;user:2&#34;</span>).<span style="color:#a6e22e">Result</span>()
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">err</span>)
+		<span style="color:#66d9ef">return</span>
+	}
+	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;查询排行榜某玩家 user:2 的排名-降序&#34;</span>, <span style="color:#a6e22e">memberRevRank</span>)
+
+	<span style="color:#75715e">//删除排序集一个成员
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">zrem</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">rdb</span>.<span style="color:#a6e22e">ZRem</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#e6db74">&#34;leaderboard&#34;</span>, <span style="color:#e6db74">&#34;user:1&#34;</span>).<span style="color:#a6e22e">Result</span>()
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">err</span>)
+		<span style="color:#66d9ef">return</span>
+	}
+	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;删除排序集一个成员&#34;</span>, <span style="color:#a6e22e">zrem</span>)
+
+	<span style="color:#75715e">//删除后查询排行榜成员-升序
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">members</span>, <span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">rdb</span>.<span style="color:#a6e22e">ZRange</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#e6db74">&#34;leaderboard&#34;</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">5</span>).<span style="color:#a6e22e">Result</span>()
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">err</span>)
+		<span style="color:#66d9ef">return</span>
+	}
+	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;删除后查询排行榜成员-升序&#34;</span>, <span style="color:#a6e22e">members</span>)
+
+	<span style="color:#75715e">//清空排行榜
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">clear</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">rdb</span>.<span style="color:#a6e22e">ZRemRangeByRank</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#e6db74">&#34;leaderboard&#34;</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">4</span>).<span style="color:#a6e22e">Result</span>()
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;err zrem&#34;</span>, <span style="color:#a6e22e">err</span>)
+		<span style="color:#66d9ef">return</span>
+	}
+	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;清空排行榜&#34;</span>, <span style="color:#a6e22e">clear</span>)
+	<span style="color:#75715e">//清空后查询排行榜成员-升序
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">members</span>, <span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">rdb</span>.<span style="color:#a6e22e">ZRange</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#e6db74">&#34;leaderboard&#34;</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">5</span>).<span style="color:#a6e22e">Result</span>()
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">err</span>)
+		<span style="color:#66d9ef">return</span>
+	}
+	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;清空后查询排行榜成员-升序&#34;</span>, <span style="color:#a6e22e">members</span>) 
+
+</code></pre></div><p>OutPut:</p>
+<pre tabindex="0"><code>查询排行榜成员-升序 [user:3 user:4 user:1 user:5 user:2]
+查询排行榜成员和分数-升序 [{87 user:2} {81 user:5} {81 user:1} {59 user:4} {47 user:3}]
+查询排行榜成员-降序 [user:2 user:5 user:1 user:4 user:3]
+查询排行榜成员和分数-升序 [{47 user:3} {59 user:4} {81 user:1} {81 user:5} {87 user:2}]
+获取某玩家 user:2 的分数 87
+更新某玩家 user:1 的分数 87
+查询排行榜变化后的排行榜成员和分数-升序 [{47 user:3} {59 user:4} {81 user:5} {87 user:1} {87 user:2}]
+查询排行榜某玩家  user:2 的排名 4
+查询排行榜某玩家 user:2 的排名-降序 0
+删除排序集一个成员 1
+删除后查询排行榜成员-升序 [user:3 user:4 user:5 user:2]
+清空排行榜 4
+清空后查询排行榜成员-升序 []
+
+</code></pre><h3 id="参考">参考</h3>
+<ul>
+<li>安装Redis <a href="https://redis.io/docs/getting-started/installation/">https://redis.io/docs/getting-started/installation/</a></li>
+<li>Redis Sort Sets Docs <a href="https://redis.io/docs/data-types/sorted-sets/">https://redis.io/docs/data-types/sorted-sets/</a></li>
+<li>Go Redis <a href="https://github.com/go-redis/redis/v9">https://github.com/go-redis/redis/v9</a></li>
+</ul>
+      
+      <p>
+        
+          <a href="https://luckytking.github.io/2022/10/golang%E4%BD%BF%E7%94%A8redissortsets%E5%AE%9E%E7%8E%B0%E6%8E%92%E8%A1%8C%E6%A6%9C/" class="postShorten-excerpt_link link" aria-label=""></a>
+        
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-right">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title">
+      
+        <a class="link-unstyled" href="https://luckytking.github.io/2022/06/redis%E5%AE%9E%E7%8E%B0%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E5%92%8C%E5%88%97%E8%A1%A8%E5%88%86%E9%A1%B5/" aria-label="">
+      
+          Redis实现对象存储和列表分页
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="2022-06-05T16:23:04&#43;08:00">
+        
+   5, 2022
+
+      </time>
+    
+    
+  
+  
+    <span></span>
+    
+      <a class="category-link" href="https://luckytking.github.io/categories/go">go</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt">
+      
+        <h2 id="场景">场景</h2>
+<p>在项目开发中，需要用到缓存和对一个列表数据分页查询，但由于redis是key-value的存储方式，我们期望的使用类似postgresql的offset和limit，不至于需要一个个key遍历过去。</p>
+<h2 id="设计">设计</h2>
+<p>分析一下我们需求，那么需求需要实现的接口大概是：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">FindByPage</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">page</span>, <span style="color:#a6e22e">size</span> <span style="color:#66d9ef">int</span>) ([]<span style="color:#a6e22e">Object</span>, <span style="color:#66d9ef">error</span>)
+</code></pre></div><p>大致我们需要解决两个问题:</p>
+<ul>
+<li>存储对象</li>
+<li>列表分页快速查找</li>
+</ul>
+<h3 id="对象存储">对象存储</h3>
+<blockquote>
+<p>Redis hash 是一个 string 类型的 field（字段） 和 value（值） 的映射表，hash 特别适合用于存储对象。</p>
+<ul>
+<li>HDEL key field1 [field2]删除一个或多个哈希表字段</li>
+<li>HEXISTS key field查看哈希表 key 中，指定的字段是否存在。</li>
+<li>HGET key field获取存储在哈希表中指定字段的值。</li>
+<li>HGETALL key获取在哈希表中指定 key 的所有字段和值</li>
+</ul>
+</blockquote>
+<p>如此，我们可以 redis hash 和 json.Encoding 来存储。
+获得一个Object</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">//【ObjectID】= &#34;{&#34;foo&#34;: &#34;123&#34;, &#34;bar&#34;:&#34;456&#34;}&#34;
+</span><span style="color:#75715e"></span>
+<span style="color:#f92672">import</span>  <span style="color:#e6db74">&#34;github.com/go-redis/redis/v8&#34;</span>
+
+<span style="color:#a6e22e">result</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">rdb</span>.<span style="color:#a6e22e">HGet</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#e6db74">&#34;key&#34;</span>, <span style="color:#a6e22e">id</span>.<span style="color:#a6e22e">String</span>()).<span style="color:#a6e22e">Result</span>()
+<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+     <span style="color:#66d9ef">return</span>
+}
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">obj</span> = <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">YourObject</span>{}
+<span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">json</span>.<span style="color:#a6e22e">Unmarshal</span>([]byte(<span style="color:#a6e22e">result</span>), <span style="color:#a6e22e">obj</span>)
+<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+     <span style="color:#66d9ef">return</span>
+}
+</code></pre></div><p>增加一个Object：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">ob</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">json</span>.<span style="color:#a6e22e">Marshal</span>(<span style="color:#a6e22e">Object</span>{}<span style="color:#960050;background-color:#1e0010">）</span>) 
+	<span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">repo</span>.<span style="color:#a6e22e">data</span>.<span style="color:#a6e22e">rdb</span>.<span style="color:#a6e22e">HSet</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#e6db74">&#34;key&#34;</span>, <span style="color:#a6e22e">ob</span>.<span style="color:#a6e22e">ID</span>, <span style="color:#a6e22e">ob</span>).<span style="color:#a6e22e">Err</span>()
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">err</span>
+	}
+</code></pre></div><h3 id="分页">分页</h3>
+<p>我们的需求中，ObjectID是一个唯一的int，那么可以使用 zset</p>
+<blockquote>
+<p>ZXyy redis 有序集合的基本命令。</p>
+<ul>
+<li>ZADD key score1 member1 [score2 member2]向有序集合添加一个或多个成员，或者更新已存在成员的分数</li>
+<li>ZCARD key获取有序集合的成员数</li>
+<li>ZRANGE key start stop [WITHSCORES]通过索引区间返回有序集合指定区间内的成员</li>
+</ul>
+</blockquote>
+<p>那么可以把 zset 的key 和 value 都设置为 ObjectID
+增加一个Object的代码：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">rdb</span>.<span style="color:#a6e22e">ZAdd</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#e6db74">&#34;key&#34;</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">redis</span>.<span style="color:#a6e22e">Z</span>{
+     <span style="color:#a6e22e">Score</span>:  float64(<span style="color:#a6e22e">Object</span>.<span style="color:#a6e22e">ID</span>),
+     <span style="color:#a6e22e">Member</span>: <span style="color:#a6e22e">strconv</span>.<span style="color:#a6e22e">Itoa</span>(int(<span style="color:#a6e22e">Object</span>.<span style="color:#a6e22e">ID</span>)),
+}).<span style="color:#a6e22e">Err</span>(); <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+     <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">err</span>
+}
+</code></pre></div><p>获取X分页的代码：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">var</span> (
+     <span style="color:#a6e22e">start</span> = int64((<span style="color:#a6e22e">page</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">*</span> <span style="color:#a6e22e">size</span>)
+     <span style="color:#a6e22e">end</span>   = <span style="color:#a6e22e">start</span> <span style="color:#f92672">+</span> int64(<span style="color:#a6e22e">size</span>)
+)
+<span style="color:#a6e22e">result</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">rdb</span>.<span style="color:#a6e22e">ZRange</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#e6db74">&#34;key&#34;</span>, <span style="color:#a6e22e">start</span>, <span style="color:#a6e22e">end</span>).<span style="color:#a6e22e">Result</span>()
+<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+     <span style="color:#66d9ef">return</span>
+}
+</code></pre></div><h3 id="测试">测试</h3>
+<p>我们增加N个Object：</p>
+<pre tabindex="0"><code>[1 a]
+[2 b]
+[3 c]
+[11 aa]
+[12 bb]
+[13 cc]
+[21 aaaa]
+</code></pre><p>每页的长度为4，获取第一页</p>
+<pre tabindex="0"><code>[1 2 3 11]
+</code></pre><p>第二页：</p>
+<pre tabindex="0"><code>[12 13 21]
+</code></pre><p>第三页：</p>
+<pre tabindex="0"><code>[ ]
+</code></pre><h4 id="参考">参考</h4>
+<ul>
+<li><a href="https://cloud.tencent.com/developer/article/1802288">https://cloud.tencent.com/developer/article/1802288</a></li>
+</ul>
+      
+      <p>
+        
+          <a href="https://luckytking.github.io/2022/06/redis%E5%AE%9E%E7%8E%B0%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E5%92%8C%E5%88%97%E8%A1%A8%E5%88%86%E9%A1%B5/" class="postShorten-excerpt_link link" aria-label=""></a>
+        
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+            
+
+          </section>
+        
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 jefffff. 
+  </span>
+</footer>
+
+      </div>
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://luckytking.github.io/images/tk.jpg" alt="" />
+    
+    <h4 id="about-card-name">jefffff</h4>
+    
+      <div id="about-card-bio">Stay hungry. Stay Foolish  <strong>COOL</strong></div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Go backend developer
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        China Amoy
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://luckytking.github.io/images/cover-v1.2.0.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://luckytking.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

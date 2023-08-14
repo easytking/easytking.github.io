@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    
+    <script type="application/ld+json">
+
+{  
+  "@context":"http://schema.org",
+  "@type":"Website",
+  "@id":"https:\/\/luckytking.github.io\/",
+  "author": {
+    "@type": "Person",
+    "name": "jefffff",
+    
+    "image": "https://luckytking.github.io/images/tk.jpg"
+    
+  },
+  "name":"jefffff\u0027s Blog",
+  "description":"",
+  "url":"https:\/\/luckytking.github.io\/tags\/kube-controller-manager\/",
+  "keywords":"[]"
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.89.2 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="jefffff">
+<meta name="keywords" content="">
+<meta name="description" content="">
+
+
+<meta property="og:description" content="">
+<meta property="og:type" content="website">
+<meta property="og:title" content="kube-controller-manager">
+<meta name="twitter:title" content="kube-controller-manager">
+<meta property="og:url" content="https://luckytking.github.io/tags/kube-controller-manager/">
+<meta property="twitter:url" content="https://luckytking.github.io/tags/kube-controller-manager/">
+<meta property="og:site_name" content="jefffff&#39;s Blog">
+<meta property="og:description" content="">
+<meta name="twitter:description" content="">
+<meta property="og:locale" content="en">
+
+
+<meta name="twitter:card" content="summary">
+
+  <meta name="twitter:site" content="@none">
+
+
+  <meta name="twitter:creator" content="@none">
+
+
+
+
+
+
+  <meta property="og:image" content="https://luckytking.github.io/images/tk.jpg">
+  <meta property="twitter:image" content="https://luckytking.github.io/images/tk.jpg">
+
+
+
+
+
+
+    <title>kube-controller-manager</title>
+
+    <link rel="icon" href="https://luckytking.github.io/favicon.jpg">
+    
+      <link rel="alternate" type="application/rss+xml" title="RSS" href="https://luckytking.github.io/tags/kube-controller-manager/index.xml">
+    
+
+    
+      <link rel="publisher" href="https://plus.google.com/&#43;thibaudlepretre">
+    
+
+    <link rel="canonical" href="https://luckytking.github.io/tags/kube-controller-manager/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://luckytking.github.io/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="2">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://luckytking.github.io/" aria-label="">jefffff&#39;s Blog</a>
+  </div>
+  
+    
+      <a class="header-right-icon open-algolia-search"
+         href="https://luckytking.github.io/#search" aria-label="">
+    
+    
+      <i class="fa fa-lg fa-search"></i>
+    
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="2">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://luckytking.github.io/#about" aria-label="">
+          <img class="sidebar-profile-picture" src="https://luckytking.github.io/images/tk.jpg" alt="" />
+        </a>
+        <h4 class="sidebar-profile-name">jefffff</h4>
+        
+          <h5 class="sidebar-profile-bio">Stay hungry. Stay Foolish  <strong>COOL</strong></h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://luckytking.github.io/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://luckytking.github.io/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://luckytking.github.io/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://luckytking.github.io/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://luckytking.github.io/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/luckytking" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://luckytking.github.io/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+        
+
+      
+      <div id="main" data-behavior="2"
+        class="
+               hasCoverMetaIn
+               ">
+        
+          <section class="postShorten-group main-content-wrap">
+            
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-right">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title">
+      
+        <a class="link-unstyled" href="https://luckytking.github.io/2023/06/%E5%AF%BC%E5%85%A5k8s%E9%9B%86%E7%BE%A4%E5%88%B0rancher%E6%8A%A5%E9%94%99no-secret-assigned-to-service-account-cattle-system/" aria-label="">
+      
+          导入k8s集群到rancher报错no Secret Assigned to Service Account Cattle System
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="2023-06-18T15:30:58&#43;08:00">
+        
+   18, 2023
+
+      </time>
+    
+    
+  
+  
+    <span></span>
+    
+      <a class="category-link" href="https://luckytking.github.io/categories/k8s">k8s</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt">
+      
+        <p>背景：</p>
+<blockquote>
+<p>在导入外部集群到rancher时，cattle-cluster-agent报错</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-css" data-lang="css"><span style="color:#f92672">level</span><span style="color:#f92672">=</span><span style="color:#f92672">fatal</span> <span style="color:#f92672">msg</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;looking up cattle-system/cattle ca/token: no secret exists for service account cattle-system/cattle&#34;</span>
+</code></pre></div><p>环境：</p>
+<table>
+<thead>
+<tr>
+<th>应用</th>
+<th>信息</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Kubernetes</td>
+<td>v1.25.7</td>
+</tr>
+<tr>
+<td>Rancher</td>
+<td>v2.6.6</td>
+</tr>
+</tbody>
+</table>
+<h3 id="解决">解决</h3>
+<p>经查，K8s在版本v1.24启用新测试功能特性-LegacyServiceAccountTokenNoAutoGeneration，默认是开启的。</p>
+<blockquote>
+<p>服务账号（Service Account）是一种自动被启用的用户认证机制，使用经过签名的持有者令牌来验证请求。</p>
+<p>服务账号通常由 API 服务器自动创建并通过 ServiceAccount 准入控制器关联到集群中运行的 Pod 上。 持有者令牌会挂载到 Pod 中可预知的位置，允许集群内进程与 API 服务器通信。 服务账号也可以使用 Pod 规约的 serviceAccountName 字段显式地关联到 Pod 上。</p>
+</blockquote>
+<p>我们可以通过k8s 组件上指定的各种特性开关控制 -
+【特性门控是描述 Kubernetes 特性的一组键值对。你可以在 Kubernetes 的各个组件中使用 &ndash;feature-gates 标志来启用或禁用这些特性。】
+关闭该特性：</p>
+<p>打开 /etc/kubernetes/manifest/kube-controller-manager.yml的
+spec.container.command中增加</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-css" data-lang="css"><span style="color:#f92672">-</span> <span style="color:#f92672">--feature-gates</span><span style="color:#f92672">=</span><span style="color:#f92672">LegacyServiceAccountTokenNoAutoGeneration</span><span style="color:#f92672">=</span><span style="color:#f92672">false</span>
+</code></pre></div><p>修改完，例如：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+<span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Pod</span>
+<span style="color:#f92672">metadata</span>:
+  <span style="color:#f92672">creationTimestamp</span>: <span style="color:#66d9ef">null</span>
+  <span style="color:#f92672">labels</span>:
+    <span style="color:#f92672">component</span>: <span style="color:#ae81ff">kube-controller-manager</span>
+    <span style="color:#f92672">tier</span>: <span style="color:#ae81ff">control-plane</span>
+  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">kube-controller-manager</span>
+  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">kube-system</span>
+<span style="color:#f92672">spec</span>:
+  <span style="color:#f92672">containers</span>:
+  - <span style="color:#f92672">command</span>:
+    - <span style="color:#ae81ff">kube-controller-manager</span>
+    - --<span style="color:#ae81ff">allocate-node-cidrs=true</span>
+    - --<span style="color:#ae81ff">authentication-kubeconfig=/etc/kubernetes/controller-manager.conf</span>
+    - --<span style="color:#ae81ff">authorization-kubeconfig=/etc/kubernetes/controller-manager.conf</span>
+    - --<span style="color:#ae81ff">bind-address=0.0.0.0</span>
+    - --<span style="color:#ae81ff">client-ca-file=/etc/kubernetes/pki/ca.crt</span>
+    - --<span style="color:#ae81ff">cluster-cidr=1.2.0.0/10</span>
+    - --<span style="color:#ae81ff">cluster-name=kubernetes</span>
+    - --<span style="color:#ae81ff">cluster-signing-cert-file=/etc/kubernetes/pki/ca.crt</span>
+    - --<span style="color:#ae81ff">cluster-signing-key-file=/etc/kubernetes/pki/ca.key</span>
+    - --<span style="color:#ae81ff">controllers=*,bootstrapsigner,tokencleaner</span>
+    - --<span style="color:#ae81ff">feature-gates=EphemeralContainers=true</span>
+    - --<span style="color:#ae81ff">kubeconfig=/etc/kubernetes/controller-manager.conf</span>
+    - --<span style="color:#ae81ff">leader-elect=true</span>
+    - --<span style="color:#ae81ff">requestheader-client-ca-file=/etc/kubernetes/pki/front-proxy-ca.crt</span>
+    - --<span style="color:#ae81ff">root-ca-file=/etc/kubernetes/pki/ca.crt</span>
+    - --<span style="color:#ae81ff">service-account-private-key-file=/etc/kubernetes/pki/sa.key</span>
+    - --<span style="color:#ae81ff">service-cluster-ip-range=10.88.0.0/22</span>
+    - --<span style="color:#ae81ff">use-service-account-credentials=true</span>
+    - --<span style="color:#ae81ff">feature-gates=LegacyServiceAccountTokenNoAutoGeneration=false</span>
+    <span style="color:#ae81ff">...</span>
+</code></pre></div><p>重启 kube-controller-manager，ps：如果是多个master，需要每个都修改。</p>
+<h3 id="小结">小结</h3>
+<p>本文记录导入外部集群到rancher时，遇到的用户认证密钥不正确的问题。回顾k8s在1.23~1.25的更新日志，以及查阅issues，原因是1.24启用了新测试特性LegacyServiceAccountTokenNoAutoGeneration，该特性使用经过签名的持有者令牌来验证请求。可以通过k8s组件上指定的各种特性开关控制来关闭此特性来解决报错，最终正常导入到rancher。</p>
+<h3 id="参考">参考</h3>
+<ul>
+<li><a href="https://kubernetes.io/zh-cn/docs/reference/command-line-tools-reference/feature-gates/"> k8s-features </a></li>
+<li><a href="https://kubernetes.io/zh-cn/docs/reference/access-authn-authz/authentication/#service-account-tokens">service-account-tokens </a></li>
+<li><a href="htps://github.com/rancher/rancher/issues/37027"> issues </a></li>
+<li><a href="htps://blog.isweluiz.com.br/2022/09/kubenetes-v1244-rancher-agent-error-no.html"> blog 解决用户secret </a></li>
+</ul>
+      
+      <p>
+        
+          <a href="https://luckytking.github.io/2023/06/%E5%AF%BC%E5%85%A5k8s%E9%9B%86%E7%BE%A4%E5%88%B0rancher%E6%8A%A5%E9%94%99no-secret-assigned-to-service-account-cattle-system/" class="postShorten-excerpt_link link" aria-label=""></a>
+        
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+            
+
+          </section>
+        
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 jefffff. 
+  </span>
+</footer>
+
+      </div>
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://luckytking.github.io/images/tk.jpg" alt="" />
+    
+    <h4 id="about-card-name">jefffff</h4>
+    
+      <div id="about-card-bio">Stay hungry. Stay Foolish  <strong>COOL</strong></div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Go backend developer
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        China Amoy
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://luckytking.github.io/images/cover-v1.2.0.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://luckytking.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

@@ -1,0 +1,787 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>redis on jefffff&#39;s Blog</title>
+    <link>https://luckytking.github.io/tags/redis/</link>
+    <description>Recent content in redis on jefffff&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Sun, 02 Apr 2023 15:20:45 +0800</lastBuildDate><atom:link href="https://luckytking.github.io/tags/redis/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>RedisStream实现消息队列</title>
+      <link>https://luckytking.github.io/2023/04/redisstream%E5%AE%9E%E7%8E%B0%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/</link>
+      <pubDate>Sun, 02 Apr 2023 15:20:45 +0800</pubDate>
+      
+      <guid>https://luckytking.github.io/2023/04/redisstream%E5%AE%9E%E7%8E%B0%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/</guid>
+      <description>Redis Stream是在 Redis 5.0中引入的数据类型，可以实现高性能、高可靠性的消息队列。本文主要介绍 Redis Stream 的概念、使用方法和一些适用场景如发布订阅模式、消息队列。
+简介 Redis Stream是Redis为消息队列设计的数据类型，它将消息队列的数据结构抽象为一个有序的消息流（stream），每个消息都有一个唯一的ID和一个关联的键值对（key-value pairs）它支持以下功能：
+ 添加消息-将消息添加到队列的末尾 读取消息-从队列的开头读取消息 删除消息-删除指定id的消息 创建消费者组-创建多个消费者组，每个消费者组都可以独立地读取消息。同时可实现负载均衡和消息分发。 确认消息- XACK 命令来确认已经成功处理的消息，避免重复消费  XADD-添加消息 语法：
+XADD key [NOMKSTREAM] [&amp;lt;MAXLEN | MINID&amp;gt; [= | ~] threshold [LIMIT count]] &amp;lt;* | id&amp;gt; field value [field value ...]  MAXLEN：可选参数，用于限制消息流的长度。如果指定了 MAXLEN，那么当消息流的长度超过指定的长度时，最早的消息将被自动删除 ID：可选参数，用于指定消息的 ID。如果不指定，Redis 会自动生成一个唯一的 ID。 field value [field value &amp;hellip; ：消息的键值对，可以是任何字符串。  例如：
+XADD mystream * name Foo age 10此命令将向名为 mystream 的消息流中添加一条消息，输出如下：
+&amp;gt;&amp;#34;1680355760868-0&amp;#34; XREAD-读取消息 语法：</description>
+    </item>
+    
+    <item>
+      <title>Golang使用RedisSortSets实现排行榜</title>
+      <link>https://luckytking.github.io/2022/10/golang%E4%BD%BF%E7%94%A8redissortsets%E5%AE%9E%E7%8E%B0%E6%8E%92%E8%A1%8C%E6%A6%9C/</link>
+      <pubDate>Sun, 30 Oct 2022 15:43:28 +0800</pubDate>
+      
+      <guid>https://luckytking.github.io/2022/10/golang%E4%BD%BF%E7%94%A8redissortsets%E5%AE%9E%E7%8E%B0%E6%8E%92%E8%A1%8C%E6%A6%9C/</guid>
+      <description>&lt;h3 id=&#34;前言&#34;&gt;前言&lt;/h3&gt;
+&lt;p&gt;游戏排行榜是一个常见需求，今天主要介绍go语言使用redis-sort-sets来实现排行榜常见功能。&lt;/p&gt;
+&lt;h3 id=&#34;redis-sort-sets&#34;&gt;Redis Sort Sets&lt;/h3&gt;
+&lt;p&gt;官方介绍：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Redis排序集是按相关分数排序的惟一字符串(成员)的集合。当多个字符串具有相同的分数时，字符串将按字典顺序排列。排序集的一些用例包括:&lt;/p&gt;
+&lt;p&gt;游戏排行榜。例如，您可以使用排序集轻松地维护大型在线游戏中最高分数的有序列表。
+速率限制器。特别是，您可以使用一个排序集来构建滑动窗口速率限制器，以防止过多的API请求。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;常用于排行榜的命令:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;ZRANGE 返回排序集的成员（升序）&lt;/li&gt;
+&lt;li&gt;ZREVANGE 返回排序集的成员（降序序）&lt;/li&gt;
+&lt;li&gt;ZADD 向排序集添加一个新成员和相关分数。如果成员已经存在，则更新评分。&lt;/li&gt;
+&lt;li&gt;ZREM 删除排序集一个成员&lt;/li&gt;
+&lt;li&gt;ZRANK 返回提供的成员的排名(升序)&lt;/li&gt;
+&lt;li&gt;ZREVRANK 返回提供的成员的排名(降序)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;go-redis&#34;&gt;Go Redis&lt;/h3&gt;
+&lt;p&gt;Go Redis为各种风格的Redis提供Go客户端，基础的使用例子如下：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;package&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;main&lt;/span&gt;
+
+&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; (
+	&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;context&amp;#34;&lt;/span&gt;
+	&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;fmt&amp;#34;&lt;/span&gt;
+	&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;github.com/go-redis/redis/v9&amp;#34;&lt;/span&gt;
+)
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;main&lt;/span&gt;() {
+	&lt;span style=&#34;color:#a6e22e&#34;&gt;ctx&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;context&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Background&lt;/span&gt;()
+	&lt;span style=&#34;color:#a6e22e&#34;&gt;rdb&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;redis&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;NewClient&lt;/span&gt;(&lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;redis&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Options&lt;/span&gt;{
+		&lt;span style=&#34;color:#a6e22e&#34;&gt;Addr&lt;/span&gt;:     &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;localhost:6379&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#75715e&#34;&gt;// use default Addr
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;		&lt;span style=&#34;color:#a6e22e&#34;&gt;Password&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;#34;&lt;/span&gt;,               &lt;span style=&#34;color:#75715e&#34;&gt;// no password set
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;		&lt;span style=&#34;color:#a6e22e&#34;&gt;DB&lt;/span&gt;:       &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;,                &lt;span style=&#34;color:#75715e&#34;&gt;// use default DB
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;	})
+	&lt;span style=&#34;color:#a6e22e&#34;&gt;pong&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;rdb&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Ping&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;ctx&lt;/span&gt;).&lt;span style=&#34;color:#a6e22e&#34;&gt;Result&lt;/span&gt;()
+	&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;nil&lt;/span&gt; {
+		&lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt;)
+		&lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt;
+	}
+	&lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;pong&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt;)
+	&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;nil&lt;/span&gt; {
+		&lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt;)
+		&lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt;
+	}
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;defer&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;rdb&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Close&lt;/span&gt;()
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;examples&#34;&gt;Examples&lt;/h3&gt;
+&lt;p&gt;这里我们用go-redis实现排行榜常见的功能，包括:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;获取排行榜成员和分数 （升序、降序）&lt;/li&gt;
+&lt;li&gt;加入排行榜成员&lt;/li&gt;
+&lt;li&gt;删除排行榜成员&lt;/li&gt;
+&lt;li&gt;更新排行榜成员分数&lt;/li&gt;
+&lt;li&gt;获取排行榜成员分数&lt;/li&gt;
+&lt;li&gt;获取排行榜名次成员&lt;/li&gt;
+&lt;li&gt;清空排行榜&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;完整代码如下：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;package&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;main&lt;/span&gt;
+
+&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; (
+	&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;context&amp;#34;&lt;/span&gt;
+	&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;fmt&amp;#34;&lt;/span&gt;
+	&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;github.com/go-redis/redis/v9&amp;#34;&lt;/span&gt;
+	&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;math/rand&amp;#34;&lt;/span&gt;
+	&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;strconv&amp;#34;&lt;/span&gt;
+)
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;main&lt;/span&gt;() {
+	&lt;span style=&#34;color:#a6e22e&#34;&gt;ctx&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;context&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Background&lt;/span&gt;()
+	&lt;span style=&#34;color:#a6e22e&#34;&gt;rdb&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;redis&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;NewClient&lt;/span&gt;(&lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;redis&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Options&lt;/span&gt;{
+		&lt;span style=&#34;color:#a6e22e&#34;&gt;Addr&lt;/span&gt;:     &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;localhost:6379&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#75715e&#34;&gt;// use default Addr
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;		&lt;span style=&#34;color:#a6e22e&#34;&gt;Password&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;#34;&lt;/span&gt;,               &lt;span style=&#34;color:#75715e&#34;&gt;// no password set
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;		&lt;span style=&#34;color:#a6e22e&#34;&gt;DB&lt;/span&gt;:       &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;,                &lt;span style=&#34;color:#75715e&#34;&gt;// use default DB
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;	}) 
+	&lt;span style=&#34;color:#66d9ef&#34;&gt;var&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;error&lt;/span&gt;
+	&lt;span style=&#34;color:#66d9ef&#34;&gt;defer&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;rdb&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Close&lt;/span&gt;()
+	&lt;span style=&#34;color:#75715e&#34;&gt;//增加玩家分数的变化
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;	&lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;i&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;; &lt;span style=&#34;color:#a6e22e&#34;&gt;i&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;; &lt;span style=&#34;color:#a6e22e&#34;&gt;i&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;++&lt;/span&gt; {
+		&lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; = &lt;span style=&#34;color:#a6e22e&#34;&gt;rdb&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;ZAdd&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;ctx&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;leaderboard&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;redis&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Z&lt;/span&gt;{
+			&lt;span style=&#34;color:#a6e22e&#34;&gt;Score&lt;/span&gt;:  float64(&lt;span style=&#34;color:#a6e22e&#34;&gt;rand&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Intn&lt;/span&gt;(&lt;span style=&#34;color:#ae81ff&#34;&gt;100&lt;/span&gt;)),
+			&lt;span style=&#34;color:#a6e22e&#34;&gt;Member&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;user:&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;strconv&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Itoa&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;i&lt;/span&gt;),
+		}).&lt;span style=&#34;color:#a6e22e&#34;&gt;Err&lt;/span&gt;()
+		&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;nil&lt;/span&gt; {
+			&lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt;)
+			&lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt;
+		}
+	}
+	&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;nil&lt;/span&gt; {
+		&lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt;)
+		&lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt;
+	}
+	&lt;span style=&#34;color:#75715e&#34;&gt;//查询排行榜成员-升序
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;	&lt;span style=&#34;color:#a6e22e&#34;&gt;members&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;rdb&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;ZRange&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;ctx&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;leaderboard&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;).&lt;span style=&#34;color:#a6e22e&#34;&gt;Result&lt;/span&gt;()
+	&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;nil&lt;/span&gt; {
+		&lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt;)
+		&lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt;
+	}
+	&lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;查询排行榜成员-升序&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;members&lt;/span&gt;)
+	&lt;span style=&#34;color:#75715e&#34;&gt;//查询排行榜成员和分数-升序
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;	&lt;span style=&#34;color:#a6e22e&#34;&gt;membersWithScore&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;rdb&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;ZRevRangeWithScores&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;ctx&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;leaderboard&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;).&lt;span style=&#34;color:#a6e22e&#34;&gt;Result&lt;/span&gt;()
+	&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;nil&lt;/span&gt; {
+		&lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt;)
+		&lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt;
+	}
+	&lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;查询排行榜成员和分数-升序&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;membersWithScore&lt;/span&gt;)
+
+	&lt;span style=&#34;color:#75715e&#34;&gt;//查询排行榜成员-降序
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;	&lt;span style=&#34;color:#a6e22e&#34;&gt;membersRev&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;rdb&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;ZRevRange&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;ctx&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;leaderboard&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;).&lt;span style=&#34;color:#a6e22e&#34;&gt;Result&lt;/span&gt;()
+	&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;nil&lt;/span&gt; {
+		&lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt;)
+		&lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt;
+	}
+	&lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;查询排行榜成员-降序&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;membersRev&lt;/span&gt;)
+	&lt;span style=&#34;color:#75715e&#34;&gt;//查询排行榜成员和分数-升序
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;	&lt;span style=&#34;color:#a6e22e&#34;&gt;membersRevWithScore&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;rdb&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;ZRangeWithScores&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;ctx&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;leaderboard&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;).&lt;span style=&#34;color:#a6e22e&#34;&gt;Result&lt;/span&gt;()
+	&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;nil&lt;/span&gt; {
+		&lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt;)
+		&lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt;
+	}
+	&lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;查询排行榜成员和分数-升序&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;membersRevWithScore&lt;/span&gt;)
+
+	&lt;span style=&#34;color:#75715e&#34;&gt;//获取某玩家的分数
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;	&lt;span style=&#34;color:#a6e22e&#34;&gt;user2Score&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;rdb&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;ZScore&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;ctx&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;leaderboard&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;user:2&amp;#34;&lt;/span&gt;).&lt;span style=&#34;color:#a6e22e&#34;&gt;Result&lt;/span&gt;()
+	&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;nil&lt;/span&gt; {
+		&lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt;)
+		&lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt;
+	}
+	&lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;获取某玩家 user:2 的分数&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;user2Score&lt;/span&gt;)
+	&lt;span style=&#34;color:#75715e&#34;&gt;//更新某玩家的分数
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;	&lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; = &lt;span style=&#34;color:#a6e22e&#34;&gt;rdb&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;ZAdd&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;ctx&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;leaderboard&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;redis&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Z&lt;/span&gt;{
+		&lt;span style=&#34;color:#a6e22e&#34;&gt;Score&lt;/span&gt;:  &lt;span style=&#34;color:#a6e22e&#34;&gt;user2Score&lt;/span&gt;,
+		&lt;span style=&#34;color:#a6e22e&#34;&gt;Member&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;user:1&amp;#34;&lt;/span&gt;,
+	}).&lt;span style=&#34;color:#a6e22e&#34;&gt;Err&lt;/span&gt;()
+	&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;nil&lt;/span&gt; {
+		&lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt;)
+		&lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt;
+	}
+	&lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;更新某玩家 user:1 的分数&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;user2Score&lt;/span&gt;)
+	&lt;span style=&#34;color:#75715e&#34;&gt;//查询排行榜成员和分数-升序
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;	&lt;span style=&#34;color:#a6e22e&#34;&gt;membersRevWithScore&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; = &lt;span style=&#34;color:#a6e22e&#34;&gt;rdb&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;ZRangeWithScores&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;ctx&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;leaderboard&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;).&lt;span style=&#34;color:#a6e22e&#34;&gt;Result&lt;/span&gt;()
+	&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;nil&lt;/span&gt; {
+		&lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt;)
+		&lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt;
+	}
+	&lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;查询排行榜变化后的排行榜成员和分数-升序&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;membersRevWithScore&lt;/span&gt;)
+
+	&lt;span style=&#34;color:#75715e&#34;&gt;//查询排行榜某玩家的分数-升序
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;	&lt;span style=&#34;color:#a6e22e&#34;&gt;memberRank&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;rdb&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;ZRank&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;ctx&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;leaderboard&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;user:2&amp;#34;&lt;/span&gt;).&lt;span style=&#34;color:#a6e22e&#34;&gt;Result&lt;/span&gt;()
+	&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;nil&lt;/span&gt; {
+		&lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt;)
+		&lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt;
+	}
+	&lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;查询排行榜某玩家  user:2 的排名&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;memberRank&lt;/span&gt;)
+
+	&lt;span style=&#34;color:#75715e&#34;&gt;//查询排行榜某玩家的分数-降序
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;	&lt;span style=&#34;color:#a6e22e&#34;&gt;memberRevRank&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;rdb&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;ZRevRank&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;ctx&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;leaderboard&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;user:2&amp;#34;&lt;/span&gt;).&lt;span style=&#34;color:#a6e22e&#34;&gt;Result&lt;/span&gt;()
+	&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;nil&lt;/span&gt; {
+		&lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt;)
+		&lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt;
+	}
+	&lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;查询排行榜某玩家 user:2 的排名-降序&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;memberRevRank&lt;/span&gt;)
+
+	&lt;span style=&#34;color:#75715e&#34;&gt;//删除排序集一个成员
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;	&lt;span style=&#34;color:#a6e22e&#34;&gt;zrem&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;rdb&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;ZRem&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;ctx&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;leaderboard&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;user:1&amp;#34;&lt;/span&gt;).&lt;span style=&#34;color:#a6e22e&#34;&gt;Result&lt;/span&gt;()
+	&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;nil&lt;/span&gt; {
+		&lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt;)
+		&lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt;
+	}
+	&lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;删除排序集一个成员&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;zrem&lt;/span&gt;)
+
+	&lt;span style=&#34;color:#75715e&#34;&gt;//删除后查询排行榜成员-升序
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;	&lt;span style=&#34;color:#a6e22e&#34;&gt;members&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; = &lt;span style=&#34;color:#a6e22e&#34;&gt;rdb&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;ZRange&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;ctx&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;leaderboard&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;).&lt;span style=&#34;color:#a6e22e&#34;&gt;Result&lt;/span&gt;()
+	&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;nil&lt;/span&gt; {
+		&lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt;)
+		&lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt;
+	}
+	&lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;删除后查询排行榜成员-升序&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;members&lt;/span&gt;)
+
+	&lt;span style=&#34;color:#75715e&#34;&gt;//清空排行榜
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;	&lt;span style=&#34;color:#a6e22e&#34;&gt;clear&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;rdb&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;ZRemRangeByRank&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;ctx&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;leaderboard&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;).&lt;span style=&#34;color:#a6e22e&#34;&gt;Result&lt;/span&gt;()
+	&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;nil&lt;/span&gt; {
+		&lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;err zrem&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt;)
+		&lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt;
+	}
+	&lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;清空排行榜&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;clear&lt;/span&gt;)
+	&lt;span style=&#34;color:#75715e&#34;&gt;//清空后查询排行榜成员-升序
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;	&lt;span style=&#34;color:#a6e22e&#34;&gt;members&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; = &lt;span style=&#34;color:#a6e22e&#34;&gt;rdb&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;ZRange&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;ctx&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;leaderboard&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;).&lt;span style=&#34;color:#a6e22e&#34;&gt;Result&lt;/span&gt;()
+	&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;nil&lt;/span&gt; {
+		&lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt;)
+		&lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt;
+	}
+	&lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;清空后查询排行榜成员-升序&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;members&lt;/span&gt;) 
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;OutPut:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;查询排行榜成员-升序 [user:3 user:4 user:1 user:5 user:2]
+查询排行榜成员和分数-升序 [{87 user:2} {81 user:5} {81 user:1} {59 user:4} {47 user:3}]
+查询排行榜成员-降序 [user:2 user:5 user:1 user:4 user:3]
+查询排行榜成员和分数-升序 [{47 user:3} {59 user:4} {81 user:1} {81 user:5} {87 user:2}]
+获取某玩家 user:2 的分数 87
+更新某玩家 user:1 的分数 87
+查询排行榜变化后的排行榜成员和分数-升序 [{47 user:3} {59 user:4} {81 user:5} {87 user:1} {87 user:2}]
+查询排行榜某玩家  user:2 的排名 4
+查询排行榜某玩家 user:2 的排名-降序 0
+删除排序集一个成员 1
+删除后查询排行榜成员-升序 [user:3 user:4 user:5 user:2]
+清空排行榜 4
+清空后查询排行榜成员-升序 []
+
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;参考&#34;&gt;参考&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;安装Redis &lt;a href=&#34;https://redis.io/docs/getting-started/installation/&#34;&gt;https://redis.io/docs/getting-started/installation/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Redis Sort Sets Docs &lt;a href=&#34;https://redis.io/docs/data-types/sorted-sets/&#34;&gt;https://redis.io/docs/data-types/sorted-sets/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Go Redis &lt;a href=&#34;https://github.com/go-redis/redis/v9&#34;&gt;https://github.com/go-redis/redis/v9&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    
+    <item>
+      <title>利用k8s储存卷来部署redis之三StatefulSet</title>
+      <link>https://luckytking.github.io/2022/09/%E5%88%A9%E7%94%A8k8s%E5%82%A8%E5%AD%98%E5%8D%B7%E6%9D%A5%E9%83%A8%E7%BD%B2redis%E4%B9%8B%E4%B8%89statefulset/</link>
+      <pubDate>Sun, 11 Sep 2022 18:20:54 +0800</pubDate>
+      
+      <guid>https://luckytking.github.io/2022/09/%E5%88%A9%E7%94%A8k8s%E5%82%A8%E5%AD%98%E5%8D%B7%E6%9D%A5%E9%83%A8%E7%BD%B2redis%E4%B9%8B%E4%B8%89statefulset/</guid>
+      <description>&lt;p&gt;前两篇(1.&lt;a href=&#34;https://luckytking.github.io/2022/08/%E5%88%A9%E7%94%A8k8s%E5%82%A8%E5%AD%98%E5%8D%B7%E6%9D%A5%E9%83%A8%E7%BD%B2redis/&#34;&gt;volume&lt;/a&gt;2.&lt;a href=&#34;https://luckytking.github.io/2022/09/%E5%88%A9%E7%94%A8k8s%E5%82%A8%E5%AD%98%E5%8D%B7%E6%9D%A5%E9%83%A8%E7%BD%B2redis%E4%B9%8B%E4%BA%8Cpv%E4%B8%8Epvc/&#34;&gt;pv&amp;amp;pvc&lt;/a&gt;)通过部署redis学习实战了k8s的来Volume、PV和PVC。但是，应⽤程序存在“有状态”和“⽆状态”两种类别，显然redis属于读写磁盘需求的有状态应⽤程序，如⽀持事务功能的RDBMS存储系统，所以，本文学习实战k8s有状态应用的部署。&lt;/p&gt;
+&lt;h3 id=&#34;stateful基础&#34;&gt;Stateful基础&lt;/h3&gt;
+&lt;p&gt;StatefulSet是Pod资源控制器的⼀种实现，⽤于部署和扩展有状态应⽤的Pod资源，确保它们的运⾏顺序及每个Pod资源的唯⼀性。适用以下需求的应用：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;稳定且唯⼀的⽹络标识符。&lt;/li&gt;
+&lt;li&gt;稳定且持久的存储。&lt;/li&gt;
+&lt;li&gt;有序、优雅地部署和扩展。&lt;/li&gt;
+&lt;li&gt;有序、优雅地删除和终⽌。&lt;/li&gt;
+&lt;li&gt;有序⽽⾃动地滚动更新。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;部署&#34;&gt;部署&lt;/h3&gt;
+&lt;p&gt;接着，这里把之前的redis存储修改为stateful的方式，修改后的步骤：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;创建 ConfigMap （参考第一篇）&lt;/li&gt;
+&lt;li&gt;修改 Deployment 为StatefulSets&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&#34;修改部署statefulsets&#34;&gt;修改部署StatefulSets&lt;/h4&gt;
+&lt;p&gt;mkdir my-redis-statefulsets.yaml&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;apps/v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;StatefulSet&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;redis&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;namespace&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-ns&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;replicas&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;serviceName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;redis&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;selector&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;matchLabels&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;redis&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;template&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
+        &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;redis&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+        - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;redis&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;redis&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;resources&lt;/span&gt;:
+            &lt;span style=&#34;color:#f92672&#34;&gt;requests&lt;/span&gt;:
+              &lt;span style=&#34;color:#f92672&#34;&gt;cpu&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;100m&lt;/span&gt;
+              &lt;span style=&#34;color:#f92672&#34;&gt;memory&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;100Mi&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;#          command: [&amp;#34;redis-server&amp;#34;,&amp;#34;/etc/redis/redis.conf&amp;#34;]&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;command&lt;/span&gt;:
+            - &lt;span style=&#34;color:#ae81ff&#34;&gt;redis-server&lt;/span&gt;
+            - &lt;span style=&#34;color:#ae81ff&#34;&gt;/etc/redis/redis.conf&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;ports&lt;/span&gt;:
+            - &lt;span style=&#34;color:#f92672&#34;&gt;containerPort&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;6379&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;volumeMounts&lt;/span&gt;:
+            - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-redis-config&lt;/span&gt;
+              &lt;span style=&#34;color:#f92672&#34;&gt;mountPath&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/etc/redis/redis.conf&lt;/span&gt;
+              &lt;span style=&#34;color:#f92672&#34;&gt;subPath&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;redis.conf&lt;/span&gt;
+            - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-redis-storage&lt;/span&gt;
+              &lt;span style=&#34;color:#f92672&#34;&gt;mountPath&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/data&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;volumes&lt;/span&gt;:
+        - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-redis-storage&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;emptyDir&lt;/span&gt;: {}
+        - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-redis-config&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;configMap&lt;/span&gt;:
+            &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-redis-config&lt;/span&gt;
+            &lt;span style=&#34;color:#f92672&#34;&gt;items&lt;/span&gt;:
+              - &lt;span style=&#34;color:#f92672&#34;&gt;key&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;redis.conf&lt;/span&gt;
+                &lt;span style=&#34;color:#f92672&#34;&gt;path&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;redis.conf&lt;/span&gt;
+ 
+---
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Service&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;redis&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;redis&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;namespace&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-ns&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;type&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;NodePort&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;ports&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;redis&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;port&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;6379&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;targetPort&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;6379&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;nodePort&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;30379&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;selector&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;redis          &lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;其中：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Headless Service：⽤于为Pod资源标识符⽣成可解析的DNS资源记录&lt;/li&gt;
+&lt;li&gt;StatefulSet ⽤于管控Pod资源&lt;/li&gt;
+&lt;li&gt;volumeClaimTemplate则基于静态或动态的PV供给⽅式为Pod资源提供
+专有且固定的存储（这里我们直接使用了第二篇创建的pv）&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;测试&#34;&gt;测试&lt;/h3&gt;
+&lt;p&gt;redis-client 连接 NodeId:NodePort&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;# redis-cli -h YourNodeIp-p 30379 -a 123456
+YourNodeIp:30379&amp;gt; info
+# Serverredis_version:7.0.4
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;连接成功!&lt;/p&gt;
+&lt;h3 id=&#34;参考&#34;&gt;参考&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;官方stateful介绍 &lt;a href=&#34;https://kubernetes.io/zh-cn/docs/tutorials/stateful-application/basic-stateful-set/#writing-to-stable-storage&#34;&gt;https://kubernetes.io/zh-cn/docs/tutorials/stateful-application/basic-stateful-set/#writing-to-stable-storage&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;《Kubernetes进阶实战-第2版》  https://item.jd.com/13140598.html&lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    
+    <item>
+      <title>利用k8s储存卷来部署redis之二PV与PVC</title>
+      <link>https://luckytking.github.io/2022/09/%E5%88%A9%E7%94%A8k8s%E5%82%A8%E5%AD%98%E5%8D%B7%E6%9D%A5%E9%83%A8%E7%BD%B2redis%E4%B9%8B%E4%BA%8Cpv%E4%B8%8Epvc/</link>
+      <pubDate>Fri, 02 Sep 2022 23:28:57 +0800</pubDate>
+      
+      <guid>https://luckytking.github.io/2022/09/%E5%88%A9%E7%94%A8k8s%E5%82%A8%E5%AD%98%E5%8D%B7%E6%9D%A5%E9%83%A8%E7%BD%B2redis%E4%B9%8B%E4%BA%8Cpv%E4%B8%8Epvc/</guid>
+      <description>&lt;p&gt;之前学习实践使用熟悉卷（Volume）来存储&lt;a href=&#34;https://luckytking.github.io/2022/08/%E5%88%A9%E7%94%A8k8s%E5%82%A8%E5%AD%98%E5%8D%B7%E6%9D%A5%E9%83%A8%E7%BD%B2redis/&#34;&gt;利用k8s储存卷来部署redis&lt;/a&gt;，本文接着学习实践k8s的存储，主要通过redis存储例子学习实战PV和PVC。&lt;/p&gt;
+&lt;h3 id=&#34;pv--pvc&#34;&gt;PV &amp;amp; PVC&lt;/h3&gt;
+&lt;p&gt;Kubernetes为例⽤户和开发隐藏底层架构的⽬标，在用户和存储服务之间添加了一个中间层，也就是PersistentVolume和PersistentVolumeClaim。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;PersistentVolume 持久卷 (是集群中的一块存储，可以由管理员事先制备， 或者使用存储类（Storage Class）来动态制备。）&lt;/li&gt;
+&lt;li&gt;PersistentVolumeClaim 持久卷申领 （
+表达的是用户对存储的请求。概念上与 Pod 类似。）
+更多详细参见参考 &lt;a href=&#34;https://kubernetes.io/zh-cn/docs/concepts/storage/persistent-volumes/#types-of-persistent-volumes&#34;&gt;https://kubernetes.io/zh-cn/docs/concepts/storage/persistent-volumes/#types-of-persistent-volumes&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;redisvolume修改为pvpvc&#34;&gt;RedisVolume修改为PV&amp;amp;PVC&lt;/h3&gt;
+&lt;p&gt;接着，这里把之前的redis存储修改为pv-pvc的方式，修改后的步骤：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;创建 ConfigMap （参考第一篇）&lt;/li&gt;
+&lt;li&gt;增加声明PV和PVC （新增）&lt;/li&gt;
+&lt;li&gt;增加 Deployment （把Volume修改为 步骤2 的PVC）&lt;/li&gt;
+&lt;li&gt;暴露 Service （参考第一篇）&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&#34;步骤2增加声明pv和pvc&#34;&gt;步骤2，增加声明PV和PVC&lt;/h4&gt;
+&lt;p&gt;mkdir my-redis-pv-pvc.yaml&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;PersistentVolume&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-redis-pv&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
+     &lt;span style=&#34;color:#f92672&#34;&gt;app&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-redis&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;capacity&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;storage&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;1Gi&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;accessModes&lt;/span&gt;:
+  - &lt;span style=&#34;color:#ae81ff&#34;&gt;ReadWriteOnce&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;hostPath&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;path&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/mnt/data/my-redis&amp;#34;&lt;/span&gt;
+---
+&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;PersistentVolumeClaim&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;redis-pvc&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;namespace&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-ns&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;accessModes&lt;/span&gt;:
+  - &lt;span style=&#34;color:#ae81ff&#34;&gt;ReadWriteOnce&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;resources&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;requests&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;storage&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;1Gi&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;执行创建&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-cmd&#34; data-lang=&#34;cmd&#34;&gt;master# kubectl apply -f my-redis-pv-pvc.yaml
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;查看pv状态&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-cmd&#34; data-lang=&#34;cmd&#34;&gt;master# kubectl get pv 
+NAME    CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM     STORAGECLASS    REASON   AGE
+my-redis-pv     1Gi        RWO            Retain           Bound    my-ns/redis-pvc                                                 50m
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;查看pvc状态&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;master# kubectl get pvc -n my-ns
+NAME               STATUS   VOLUME         CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+redis-pvc          Bound    my-redis-pv    1Gi             RWO                                          54m
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;pv和pvc已经Bound成功。&lt;/p&gt;
+&lt;h4 id=&#34;步骤3增加-deployment-把volume修改为-步骤2-的pvc&#34;&gt;步骤3，增加 Deployment （把Volume修改为 步骤2 的PVC）&lt;/h4&gt;
+&lt;p&gt;mkdir my-redis-deployment-pvc.yaml&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;apps/v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Deployment&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-redis&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# Unique name for the deployment&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;namespace&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;myns&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;app&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-redis      &lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# Labels to be applied to this deployment&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;selector&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;matchLabels&lt;/span&gt;:     &lt;span style=&#34;color:#75715e&#34;&gt;# This deployment applies to the Pods matching these labels&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;app&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-redis&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;role&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;master&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;tier&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;backend&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;replicas&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;        &lt;span style=&#34;color:#75715e&#34;&gt;# Run a single pod in the deployment&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;template&lt;/span&gt;:          &lt;span style=&#34;color:#75715e&#34;&gt;# Template for the pods that will be created by this deployment&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:        &lt;span style=&#34;color:#75715e&#34;&gt;# Labels to be applied to the Pods in this deployment&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;app&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-redis&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;role&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;master&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;tier&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;backend&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:            &lt;span style=&#34;color:#75715e&#34;&gt;# Spec for the container which will be run inside the Pod.&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+        - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-redis&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;redis&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;resources&lt;/span&gt;:
+            &lt;span style=&#34;color:#f92672&#34;&gt;requests&lt;/span&gt;:
+              &lt;span style=&#34;color:#f92672&#34;&gt;cpu&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;100m&lt;/span&gt;
+              &lt;span style=&#34;color:#f92672&#34;&gt;memory&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;100Mi&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;#          command: [&amp;#34;redis-server&amp;#34;,&amp;#34;/etc/redis/redis.conf&amp;#34;]&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;command&lt;/span&gt;:
+            - &lt;span style=&#34;color:#ae81ff&#34;&gt;redis-server&lt;/span&gt;
+            - &lt;span style=&#34;color:#ae81ff&#34;&gt;/etc/redis/redis.conf&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;ports&lt;/span&gt;:
+            - &lt;span style=&#34;color:#f92672&#34;&gt;containerPort&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;6379&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;volumeMounts&lt;/span&gt;:
+            - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-redis-config&lt;/span&gt;
+              &lt;span style=&#34;color:#f92672&#34;&gt;mountPath&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/etc/redis/redis.conf&lt;/span&gt;
+              &lt;span style=&#34;color:#f92672&#34;&gt;subPath&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;redis.conf&lt;/span&gt;
+            - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-redis-storage&lt;/span&gt;
+              &lt;span style=&#34;color:#f92672&#34;&gt;mountPath&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/data&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;volumes&lt;/span&gt;:
+        - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-redis-persistent-storage &lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;persistentVolumeClaim&lt;/span&gt;:
+          &lt;span style=&#34;color:#f92672&#34;&gt;claimName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;redis-pvc&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# 这里修改为步骤2声明的pvc&lt;/span&gt;
+        - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-redis-config&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;configMap&lt;/span&gt;:
+            &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-redis-config&lt;/span&gt;
+            &lt;span style=&#34;color:#f92672&#34;&gt;items&lt;/span&gt;:
+              - &lt;span style=&#34;color:#f92672&#34;&gt;key&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;redis.conf&lt;/span&gt;
+                &lt;span style=&#34;color:#f92672&#34;&gt;path&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;redis.conf&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;执行创建deployment&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-cmd&#34; data-lang=&#34;cmd&#34;&gt;master# kubectl apply -f my-redis-deployment-pvc.yaml
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;检查状态&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-cmd&#34; data-lang=&#34;cmd&#34;&gt;master# kubectl get pod -n my-ns
+NAME                                   READY   STATUS    RESTARTS   AGE 
+my-redis-6565459689-mbptf              1/1     Running   0          53m
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;测试&#34;&gt;测试&lt;/h4&gt;
+&lt;p&gt;redis-client 连接 NodeId:NodePort&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;# redis-cli -h YourNodeIp-p 30379 -a 123456
+YourNodeIp:30379&amp;gt; info
+# Server
+redis_version:7.0.4
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;连接成功。&lt;/p&gt;
+&lt;h3 id=&#34;参考&#34;&gt;参考&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://kubernetes.io/zh-cn/docs/concepts/storage/persistent-volumes/#types-of-persistent-volumes&#34;&gt;https://kubernetes.io/zh-cn/docs/concepts/storage/persistent-volumes/#types-of-persistent-volumes&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/configure-persistent-volume-storage/#create-a-persistentvolume&#34;&gt;https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/configure-persistent-volume-storage/#create-a-persistentvolume&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    
+    <item>
+      <title>利用k8s储存卷来部署redis</title>
+      <link>https://luckytking.github.io/2022/08/%E5%88%A9%E7%94%A8k8s%E5%82%A8%E5%AD%98%E5%8D%B7%E6%9D%A5%E9%83%A8%E7%BD%B2redis/</link>
+      <pubDate>Sun, 28 Aug 2022 16:29:07 +0800</pubDate>
+      
+      <guid>https://luckytking.github.io/2022/08/%E5%88%A9%E7%94%A8k8s%E5%82%A8%E5%AD%98%E5%8D%B7%E6%9D%A5%E9%83%A8%E7%BD%B2redis/</guid>
+      <description>&lt;p&gt;本文主要通过利用k8s如何部署Redis,来学习使用k8s的存储卷Volume。&lt;/p&gt;
+&lt;p&gt;Pod本⾝具有⽣命周期，故其内部运⾏的容器及其相关数据⾃⾝均⽆法持久存在。Kubernetes也⽀持类似Docker的存储卷功能，不过，其存储卷Volume是与Pod资源绑定⽽⾮容器。&lt;/p&gt;
+&lt;h3 id=&#34;pod-volume&#34;&gt;Pod Volume&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;如何要在一个Pod里声明 Volume&lt;/strong&gt;：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;⼀是通过.spec.volumes字段定义在Pod之上的存储卷列表，其⽀持使⽤多种不同类型的存储卷且配置参数差别很⼤；&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+&lt;span style=&#34;color:#ae81ff&#34;&gt;…&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;volumes&lt;/span&gt;:
+&lt;span style=&#34;color:#f92672&#34;&gt;* name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;logdata&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;emptyDir&lt;/span&gt;: {}
+&lt;span style=&#34;color:#f92672&#34;&gt;* name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;example&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;gitRepo&lt;/span&gt;:
+&lt;span style=&#34;color:#f92672&#34;&gt;repository&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;https://github.com/iKubernetes/k8s_book.git&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;revision&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;master&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;directory&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;.&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;另⼀个是通过.spec.containers.volumeMounts字段在容器上定义的存储卷挂载列表，它只能挂载当前Pod资源中定义的具体存储卷，当然，也可以不挂载任何存储卷&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+&lt;span style=&#34;color:#ae81ff&#34;&gt;…&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+&lt;span style=&#34;color:#f92672&#34;&gt;* name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;&amp;lt;String&amp;gt;&lt;/span&gt;
+&lt;span style=&#34;color:#ae81ff&#34;&gt;…&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;volumeMounts&lt;/span&gt;:
+* &lt;span style=&#34;color:#ae81ff&#34;&gt;name &amp;lt;string&amp;gt; -required-&lt;/span&gt;
+&lt;span style=&#34;color:#ae81ff&#34;&gt;mountPath &amp;lt;string&amp;gt; -required-&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;在之前（&lt;a href=&#34;https://luckytking.github.io/2022/07/k8s%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E8%B5%84%E6%BA%90%E9%85%8D%E7%BD%AE%E5%92%8C%E5%A3%B0%E6%98%8E%E5%BC%8F%E5%AF%B9%E8%B1%A1%E9%85%8D%E7%BD%AE/&#34;&gt;声明式对象配置&lt;/a&gt;）有介绍过nginx的部署，接着来部署Redis，和Nginx有所不同的是，这里多了一个 ConfigMap 和Volume ,用来配置管理redis和储存。&lt;/p&gt;
+&lt;h3 id=&#34;环境&#34;&gt;环境&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;一个k8s 集群（mater* 1，node* 1）&lt;/li&gt;
+&lt;li&gt;一个正常连接k8smater的主机的终端&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;创建-config-map&#34;&gt;创建 Config-Map&lt;/h3&gt;
+&lt;p&gt;使用 ConfigMap 来配置 Redis ，包含了Redis配置文件里需要的配置项，在创建Pod时会作为配置文件挂载到应用所在的容器中。 my-config-map.yaml 具体如下：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;ConfigMap&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-redis-config&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;namespace&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-ns&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;data&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;redis.conf&lt;/span&gt;: |&lt;span style=&#34;color:#e6db74&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    requirepass 123456
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    protected-mode no
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    port 6379
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    tcp-backlog 511
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    timeout 0
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    tcp-keepalive 300
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    daemonize no
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    supervised no
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    pidfile /var/run/redis_6379.pid
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    loglevel notice
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    logfile &amp;#34;&amp;#34;
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    databases 16
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    always-show-logo yes
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    save 900 1
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    save 300 10
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    save 60 10000
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    stop-writes-on-bgsave-error yes
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    rdbcompression yes
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    rdbchecksum yes
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    dbfilename dump.rdb
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    dir /data
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    slave-serve-stale-data yes
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    slave-read-only yes
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    repl-diskless-sync no
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    repl-diskless-sync-delay 5
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    repl-disable-tcp-nodelay no
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    slave-priority 100
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    lazyfree-lazy-eviction no
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    lazyfree-lazy-expire no
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    lazyfree-lazy-server-del no
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    slave-lazy-flush no
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    appendonly no
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    appendfilename &amp;#34;appendonly.aof&amp;#34;
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    appendfsync everysec
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    no-appendfsync-on-rewrite no
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    auto-aof-rewrite-percentage 100
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    auto-aof-rewrite-min-size 64mb
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    aof-load-truncated yes
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    aof-use-rdb-preamble no
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    lua-time-limit 5000
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    slowlog-log-slower-than 10000
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    slowlog-max-len 128
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    latency-monitor-threshold 0
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    notify-keyspace-events Ex
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    hash-max-ziplist-entries 512
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    hash-max-ziplist-value 64
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    list-max-ziplist-size -2
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    list-compress-depth 0
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    set-max-intset-entries 512
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    zset-max-ziplist-entries 128
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    zset-max-ziplist-value 64
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    hll-sparse-max-bytes 3000
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    activerehashing yes
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    client-output-buffer-limit normal 0 0 0
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    client-output-buffer-limit slave 256mb 64mb 60
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    client-output-buffer-limit pubsub 32mb 8mb 60
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    hz 10
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    aof-rewrite-incremental-fsync yes&lt;/span&gt;    
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;执行命令&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;# kubectl apply -f my-redis-config.yaml
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;创建-deployment&#34;&gt;创建 Deployment&lt;/h3&gt;
+&lt;p&gt;创建Deployment 作为调度Pod运行 Redis 的载体。my-redis-deployment.yaml具体如下&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;apps/v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Deployment&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-redis&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# Unique name for the deployment&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;namespace&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-ns&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;app&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-redis      &lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# Labels to be applied to this deployment&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;selector&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;matchLabels&lt;/span&gt;:     &lt;span style=&#34;color:#75715e&#34;&gt;# This deployment applies to the Pods matching these labels&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;app&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-redis&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;role&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;master&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;tier&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;backend&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;replicas&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;        &lt;span style=&#34;color:#75715e&#34;&gt;# Run a single pod in the deployment&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;template&lt;/span&gt;:          &lt;span style=&#34;color:#75715e&#34;&gt;# Template for the pods that will be created by this deployment&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:        &lt;span style=&#34;color:#75715e&#34;&gt;# Labels to be applied to the Pods in this deployment&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;app&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-redis&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;role&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;master&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;tier&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;backend&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:            &lt;span style=&#34;color:#75715e&#34;&gt;# Spec for the container which will be run inside the Pod.&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+        - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-redis&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;redis&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;resources&lt;/span&gt;:
+            &lt;span style=&#34;color:#f92672&#34;&gt;requests&lt;/span&gt;:
+              &lt;span style=&#34;color:#f92672&#34;&gt;cpu&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;100m&lt;/span&gt;
+              &lt;span style=&#34;color:#f92672&#34;&gt;memory&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;100Mi&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;#          command: [&amp;#34;redis-server&amp;#34;,&amp;#34;/etc/redis/redis.conf&amp;#34;]&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;command&lt;/span&gt;:
+            - &lt;span style=&#34;color:#ae81ff&#34;&gt;redis-server&lt;/span&gt;
+            - &lt;span style=&#34;color:#ae81ff&#34;&gt;/etc/redis/redis.conf&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;ports&lt;/span&gt;:
+            - &lt;span style=&#34;color:#f92672&#34;&gt;containerPort&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;6379&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;volumeMounts&lt;/span&gt;:
+            - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-redis-config&lt;/span&gt;
+              &lt;span style=&#34;color:#f92672&#34;&gt;mountPath&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/etc/redis/redis.conf&lt;/span&gt;
+              &lt;span style=&#34;color:#f92672&#34;&gt;subPath&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;redis.conf&lt;/span&gt;
+            - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-redis-storage&lt;/span&gt;
+              &lt;span style=&#34;color:#f92672&#34;&gt;mountPath&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/data&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;volumes&lt;/span&gt;:
+        - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-redis-storage&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;emptyDir&lt;/span&gt;: {}
+        - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-redis-config&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;configMap&lt;/span&gt;:
+            &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-redis-config&lt;/span&gt;
+            &lt;span style=&#34;color:#f92672&#34;&gt;items&lt;/span&gt;:
+              - &lt;span style=&#34;color:#f92672&#34;&gt;key&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;redis.conf&lt;/span&gt;
+                &lt;span style=&#34;color:#f92672&#34;&gt;path&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;redis.conf&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;执行&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;# kubectl apply -f my-redis-deployment.yaml
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;创建-service&#34;&gt;创建 service&lt;/h3&gt;
+&lt;p&gt;NodePort 方式向外暴露服务。my-redis-service.yaml 具体如下&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Service       &lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# Type of Kubernetes resource&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-redis-svc&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# Name of the Kubernetes resource&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;namespace&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-ns&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:            &lt;span style=&#34;color:#75715e&#34;&gt;# Labels that will be applied to this resource&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;app&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-redis&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;role&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;master&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;tier&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;backend&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;type&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;NodePort&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;ports&lt;/span&gt;:
+    - &lt;span style=&#34;color:#f92672&#34;&gt;port&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;6379&lt;/span&gt;       &lt;span style=&#34;color:#75715e&#34;&gt;# Map incoming connections on port 6379 to the target port 6379 of the Pod&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;targetPort&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;6379&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;nodePort&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;30379&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;selector&lt;/span&gt;:          &lt;span style=&#34;color:#75715e&#34;&gt;# Map any Pod with the specified labels to this service&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;app&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-redis&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;role&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;master&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;tier&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;backend&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;执行&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;# kubectl apply -f my-redis-service.yaml
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;测试&#34;&gt;测试&lt;/h3&gt;
+&lt;p&gt;redis-client 测试NodeId:NodePort&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-cmd&#34; data-lang=&#34;cmd&#34;&gt;redis-cli -h YourNodeIp -p 30379 -a 123456
+YourNodeIp:30379&amp;gt; info
+# Server
+redis_version:7.0.4
+...
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;连接成功。&lt;/p&gt;
+&lt;h3 id=&#34;参考&#34;&gt;参考&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://kubernetes.io/zh-cn/docs/tutorials/configuration/configure-redis-using-configmap/&#34;&gt;https://kubernetes.io/zh-cn/docs/tutorials/configuration/configure-redis-using-configmap/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/kevinyan815/LearningKubernetes/tree/master/redis-singleton&#34;&gt;https://github.com/kevinyan815/LearningKubernetes/tree/master/redis-singleton&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;《Kubernetes进阶实战-第2版》  &lt;a href=&#34;https://item.jd.com/13140598.html&#34;&gt;https://item.jd.com/13140598.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    
+    <item>
+      <title>Redis实现对象存储和列表分页</title>
+      <link>https://luckytking.github.io/2022/06/redis%E5%AE%9E%E7%8E%B0%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E5%92%8C%E5%88%97%E8%A1%A8%E5%88%86%E9%A1%B5/</link>
+      <pubDate>Sun, 05 Jun 2022 16:23:04 +0800</pubDate>
+      
+      <guid>https://luckytking.github.io/2022/06/redis%E5%AE%9E%E7%8E%B0%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E5%92%8C%E5%88%97%E8%A1%A8%E5%88%86%E9%A1%B5/</guid>
+      <description>&lt;h2 id=&#34;场景&#34;&gt;场景&lt;/h2&gt;
+&lt;p&gt;在项目开发中，需要用到缓存和对一个列表数据分页查询，但由于redis是key-value的存储方式，我们期望的使用类似postgresql的offset和limit，不至于需要一个个key遍历过去。&lt;/p&gt;
+&lt;h2 id=&#34;设计&#34;&gt;设计&lt;/h2&gt;
+&lt;p&gt;分析一下我们需求，那么需求需要实现的接口大概是：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;FindByPage&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;ctx&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;context&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Context&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;page&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;size&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;int&lt;/span&gt;) ([]&lt;span style=&#34;color:#a6e22e&#34;&gt;Object&lt;/span&gt;, &lt;span style=&#34;color:#66d9ef&#34;&gt;error&lt;/span&gt;)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;大致我们需要解决两个问题:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;存储对象&lt;/li&gt;
+&lt;li&gt;列表分页快速查找&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;对象存储&#34;&gt;对象存储&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Redis hash 是一个 string 类型的 field（字段） 和 value（值） 的映射表，hash 特别适合用于存储对象。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;HDEL key field1 [field2]删除一个或多个哈希表字段&lt;/li&gt;
+&lt;li&gt;HEXISTS key field查看哈希表 key 中，指定的字段是否存在。&lt;/li&gt;
+&lt;li&gt;HGET key field获取存储在哈希表中指定字段的值。&lt;/li&gt;
+&lt;li&gt;HGETALL key获取在哈希表中指定 key 的所有字段和值&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;如此，我们可以 redis hash 和 json.Encoding 来存储。
+获得一个Object&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;//【ObjectID】= &amp;#34;{&amp;#34;foo&amp;#34;: &amp;#34;123&amp;#34;, &amp;#34;bar&amp;#34;:&amp;#34;456&amp;#34;}&amp;#34;
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;github.com/go-redis/redis/v8&amp;#34;&lt;/span&gt;
+
+&lt;span style=&#34;color:#a6e22e&#34;&gt;result&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;rdb&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;HGet&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;ctx&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;key&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;id&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;String&lt;/span&gt;()).&lt;span style=&#34;color:#a6e22e&#34;&gt;Result&lt;/span&gt;()
+&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;nil&lt;/span&gt; {
+     &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt;
+}
+&lt;span style=&#34;color:#66d9ef&#34;&gt;var&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;obj&lt;/span&gt; = &lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;YourObject&lt;/span&gt;{}
+&lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; = &lt;span style=&#34;color:#a6e22e&#34;&gt;json&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Unmarshal&lt;/span&gt;([]byte(&lt;span style=&#34;color:#a6e22e&#34;&gt;result&lt;/span&gt;), &lt;span style=&#34;color:#a6e22e&#34;&gt;obj&lt;/span&gt;)
+&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;nil&lt;/span&gt; {
+     &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;增加一个Object：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;ob&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;json&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Marshal&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;Object&lt;/span&gt;{}&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;）&lt;/span&gt;) 
+	&lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; = &lt;span style=&#34;color:#a6e22e&#34;&gt;repo&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;rdb&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;HSet&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;ctx&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;key&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;ob&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;ID&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;ob&lt;/span&gt;).&lt;span style=&#34;color:#a6e22e&#34;&gt;Err&lt;/span&gt;()
+	&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;nil&lt;/span&gt; {
+		&lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt;
+	}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;分页&#34;&gt;分页&lt;/h3&gt;
+&lt;p&gt;我们的需求中，ObjectID是一个唯一的int，那么可以使用 zset&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;ZXyy redis 有序集合的基本命令。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;ZADD key score1 member1 [score2 member2]向有序集合添加一个或多个成员，或者更新已存在成员的分数&lt;/li&gt;
+&lt;li&gt;ZCARD key获取有序集合的成员数&lt;/li&gt;
+&lt;li&gt;ZRANGE key start stop [WITHSCORES]通过索引区间返回有序集合指定区间内的成员&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;那么可以把 zset 的key 和 value 都设置为 ObjectID
+增加一个Object的代码：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;rdb&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;ZAdd&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;ctx&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;key&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;redis&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Z&lt;/span&gt;{
+     &lt;span style=&#34;color:#a6e22e&#34;&gt;Score&lt;/span&gt;:  float64(&lt;span style=&#34;color:#a6e22e&#34;&gt;Object&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;ID&lt;/span&gt;),
+     &lt;span style=&#34;color:#a6e22e&#34;&gt;Member&lt;/span&gt;: &lt;span style=&#34;color:#a6e22e&#34;&gt;strconv&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Itoa&lt;/span&gt;(int(&lt;span style=&#34;color:#a6e22e&#34;&gt;Object&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;ID&lt;/span&gt;)),
+}).&lt;span style=&#34;color:#a6e22e&#34;&gt;Err&lt;/span&gt;(); &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;nil&lt;/span&gt; {
+     &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;获取X分页的代码：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;var&lt;/span&gt; (
+     &lt;span style=&#34;color:#a6e22e&#34;&gt;start&lt;/span&gt; = int64((&lt;span style=&#34;color:#a6e22e&#34;&gt;page&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;) &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;size&lt;/span&gt;)
+     &lt;span style=&#34;color:#a6e22e&#34;&gt;end&lt;/span&gt;   = &lt;span style=&#34;color:#a6e22e&#34;&gt;start&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; int64(&lt;span style=&#34;color:#a6e22e&#34;&gt;size&lt;/span&gt;)
+)
+&lt;span style=&#34;color:#a6e22e&#34;&gt;result&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;rdb&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;ZRange&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;ctx&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;key&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;start&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;end&lt;/span&gt;).&lt;span style=&#34;color:#a6e22e&#34;&gt;Result&lt;/span&gt;()
+&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;nil&lt;/span&gt; {
+     &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;测试&#34;&gt;测试&lt;/h3&gt;
+&lt;p&gt;我们增加N个Object：&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;[1 a]
+[2 b]
+[3 c]
+[11 aa]
+[12 bb]
+[13 cc]
+[21 aaaa]
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;每页的长度为4，获取第一页&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;[1 2 3 11]
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;第二页：&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;[12 13 21]
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;第三页：&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;[ ]
+&lt;/code&gt;&lt;/pre&gt;&lt;h4 id=&#34;参考&#34;&gt;参考&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://cloud.tencent.com/developer/article/1802288&#34;&gt;https://cloud.tencent.com/developer/article/1802288&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    
+  </channel>
+</rss>
